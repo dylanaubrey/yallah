@@ -26,7 +26,7 @@ export default class Yallah {
     newInstance = false,
   } = {}) {
     if (instance && !newInstance) return instance;
-    this._addEventListener();
+    if (process.env.WEB_ENV) this._addEventListener();
     instance = this;
     return instance;
   }
