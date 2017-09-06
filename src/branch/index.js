@@ -26,6 +26,7 @@ export default class Branch {
   } = {}) {
     this._context = context;
     this._name = name;
+    this._state = {};
   }
 
   /**

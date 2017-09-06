@@ -1,6 +1,7 @@
-import { isFunction, isString } from 'lodash';
+import { isFunction, isPlainObject, isString } from 'lodash';
 import Action from './action';
 import Branch from './branch';
+import addBrowserEventListeners from './browser-event-listeners';
 import Subscriber from './subscriber';
 
 let instance;
@@ -18,6 +19,19 @@ export default class Yallah {
    */
   constructor({
     /**
+     * Optionally add common browser
+     * event listeners.
+     *
+     * @type {boolean}
+     */
+    browserEventListeners = true,
+    /**
+     * Optional initial state tree.
+     *
+     * @type {Object}
+     */
+    initialState,
+    /**
      * Whether to create a new instance of a
      * client or return the existing instance.
      *
@@ -26,7 +40,13 @@ export default class Yallah {
     newInstance = false,
   } = {}) {
     if (instance && !newInstance) return instance;
-    if (process.env.WEB_ENV) this._addEventListener();
+
+    if (process.env.WEB_ENV) {
+      this._addDispatchEventListener();
+      if (browserEventListeners) this._addBrowserEventListeners();
+      if (isPlainObject(initialState)) this._setInitialState(initialState);
+    }
+
     instance = this;
     return instance;
   }
@@ -50,7 +70,16 @@ export default class Yallah {
    * @private
    * @return {void}
    */
-  _addEventListener() {
+  _addBrowserEventListeners() {
+    addBrowserEventListeners(this._dispatch);
+  }
+
+  /**
+   *
+   * @private
+   * @return {void}
+   */
+  _addDispatchEventListener() {
     window.addEventListener('dispatch', ({ action }) => {
       this._dispatch(action);
     });
@@ -85,6 +114,16 @@ export default class Yallah {
     subscribers.forEach((subscriber) => {
       subscriber.receive(action);
     });
+  }
+
+  /**
+   *
+   * @private
+   * @param {Object} initialState
+   * @return {void}
+   */
+  _setInitialState() {
+    // TODO
   }
 
   /**
