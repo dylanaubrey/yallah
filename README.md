@@ -1,4 +1,4 @@
 # yallah
-An isomorphic, dynamic, event-driven data model.
+An isomorphic, dynamic, event-driven state tree.
 
 ### More to follow...
