@@ -1,3 +1,5 @@
+import { deepFreeze } from '../helpers';
+
 /**
  *
  * The Yallah branch
@@ -31,11 +33,38 @@ export default class Branch {
 
   /**
    *
+   * @return {Object}
+   */
+  get state() {
+    return this._state;
+  }
+
+  /**
+   *
+   * @private
+   * @param {Object} obj
+   * @return {void}
+   */
+  _setState(obj) {
+    this._state = deepFreeze(obj);
+  }
+
+  /**
+   *
    * @param {Object} action
    * @return {void}
    */
   async dispatch(action) {
     this._context.dispatch(action);
+  }
+
+  /**
+   *
+   * @param {Object} obj
+   * @return {void}
+   */
+  async setState(obj) {
+    this._setState(obj);
   }
 
   /**

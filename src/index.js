@@ -8,7 +8,7 @@ let instance;
 
 /**
  *
- * The Yallah state tree
+ * The Yallah app state tree
  */
 export default class Yallah {
   /**
@@ -26,12 +26,6 @@ export default class Yallah {
      */
     browserEventListeners = true,
     /**
-     * Optional initial state tree.
-     *
-     * @type {Object}
-     */
-    initialState,
-    /**
      * Whether to create a new instance of a
      * client or return the existing instance.
      *
@@ -44,12 +38,18 @@ export default class Yallah {
     if (process.env.WEB_ENV) {
       this._addDispatchEventListener();
       if (browserEventListeners) this._addBrowserEventListeners();
-      if (isPlainObject(initialState)) this._setInitialState(initialState);
     }
 
     instance = this;
     return instance;
   }
+
+  /**
+   *
+   * @private
+   * @type {Object}
+   */
+  _context = { dispatch: this._dispatch, subscribe: this._subscribe };
 
   /**
    *
@@ -119,16 +119,6 @@ export default class Yallah {
   /**
    *
    * @private
-   * @param {Object} initialState
-   * @return {void}
-   */
-  _setInitialState() {
-    // TODO
-  }
-
-  /**
-   *
-   * @private
    * @param {Object} args
    * @param {Function} args.callback
    * @param {string} args.type
@@ -166,8 +156,7 @@ export default class Yallah {
   createBranch({ name }) {
     const errors = 'Yallah::createBranch::The branch name was invalid.';
     if (!isString(name)) return { errors };
-    const context = { dispatch: this._dispatch, subscribe: this._subscribe };
-    this._tree.set(name, new Branch({ context, name }));
+    this._tree.set(name, new Branch({ context: this._context, name }));
     return this._tree.get(name);
   }
 
@@ -178,5 +167,34 @@ export default class Yallah {
    */
   async dispatch(action) {
     this._dispatch(action);
+  }
+
+  /**
+   *
+   * @return {Object}
+   */
+  getState() {
+    const state = {};
+
+    this._tree.forEach((branch, branchName) => {
+      state[branchName] = branch.state;
+    });
+
+    return state;
+  }
+
+  /**
+   *
+   * @param {Object} initialState
+   * @return {void}
+   */
+  setInitialState(initialState) {
+    if (!isPlainObject(initialState)) return;
+
+    Object.keys(initialState).forEach((branchName) => {
+      if (!this._tree.has(branchName)) return;
+      const branch = this._tree.get(branchName);
+      branch.setState(initialState[branchName]);
+    });
   }
 }
