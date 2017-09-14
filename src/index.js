@@ -2,6 +2,7 @@ import { isFunction, isPlainObject, isString } from 'lodash';
 import Action from './action';
 import Branch from './branch';
 import addBrowserEventListeners from './browser-event-listeners';
+import logger from './logger';
 import Subscriber from './subscriber';
 
 let instance;
@@ -97,7 +98,13 @@ export default class Yallah {
    */
   async _dispatch({ error, meta, payload, type }) {
     const action = new Action({ error, meta, payload, type });
-    if (!action.valid()) return;
+
+    if (!action.valid()) {
+      const errors = 'Yallah::_dispatch::The action was invalid.';
+      logger.error(errors);
+      return;
+    }
+
     this._distribute(action);
   }
 
@@ -126,10 +133,32 @@ export default class Yallah {
    */
   _subscribe({ callback, type }) {
     const subscriber = new Subscriber({ callback, type });
-    if (!subscriber.valid()) return;
+
+    if (!subscriber.valid()) {
+      const errors = 'Yallah::_subscribe::The subscriber was invalid.';
+      logger.error(errors);
+      return;
+    }
+
     const subscribers = this._subscribers.get(subscriber.type) || new Set();
     subscribers.add(subscriber);
     this._subscribers.set(subscriber.type, subscribers);
+  }
+
+  /**
+   *
+   * @param {Branch} branch
+   * @return {void}
+   */
+  addBranch(branch) {
+    if (!(branch instanceof Branch)) {
+      const errors = 'Yallah::createBranch::The branch name was invalid.';
+      logger.error(errors);
+      return;
+    }
+
+    branch.setContext(this._context);
+    this._tree.set(branch);
   }
 
   /**
@@ -140,24 +169,15 @@ export default class Yallah {
    * @return {void}
    */
   addEventListener(target, type, callback) {
-    if (!(target instanceof EventTarget) || !isString(type) || !isFunction(callback)) return;
+    if (!(target instanceof EventTarget) || !isString(type) || !isFunction(callback)) {
+      const errors = 'Yallah::addEventListener::The arguments were invalid.';
+      logger.error(errors);
+      return;
+    }
 
     target.addEventListener(type, (e) => {
       callback(e);
     });
-  }
-
-  /**
-   *
-   * @param {Object} opts
-   * @param {string} opts.name
-   * @return {Object|Branch}
-   */
-  createBranch({ name }) {
-    const errors = 'Yallah::createBranch::The branch name was invalid.';
-    if (!isString(name)) return { errors };
-    this._tree.set(name, new Branch({ context: this._context, name }));
-    return this._tree.get(name);
   }
 
   /**
@@ -189,7 +209,11 @@ export default class Yallah {
    * @return {void}
    */
   setInitialState(initialState) {
-    if (!isPlainObject(initialState)) return;
+    if (!isPlainObject(initialState)) {
+      const errors = 'Yallah::setInitialState::The initial state was invalid.';
+      logger.error(errors);
+      return;
+    }
 
     Object.keys(initialState).forEach((branchName) => {
       if (!this._tree.has(branchName)) return;

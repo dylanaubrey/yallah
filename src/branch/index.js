@@ -1,3 +1,4 @@
+import { isFunction } from 'lodash';
 import { deepFreeze } from '../helpers';
 
 /**
@@ -8,28 +9,29 @@ export default class Branch {
   /**
    *
    * @constructor
-   * @param {Object} config
+   * @param {String} name
+   * @param {Function} callback
    * @return {Branch}
    */
-  constructor({
-    /**
-     * Global context passed down to
-     * all branches.
-     *
-     * @type {Object}
-     */
-    context,
-    /**
-     * Branch name
-     *
-     * @type {string}
-     */
-    name,
-  } = {}) {
-    this._context = context;
+  constructor(name, callback) {
+    if (!name) throw new Error('Name is a mandatory argument for a branch.');
     this._name = name;
-    this._state = {};
+    if (isFunction(callback)) callback.call(this);
   }
+
+  /**
+   *
+   * @private
+   * @type {Object}
+   */
+  _context = {};
+
+  /**
+   *
+   * @private
+   * @type {Object}
+   */
+  _state = {};
 
   /**
    *
@@ -56,6 +58,15 @@ export default class Branch {
    */
   async dispatch(action) {
     this._context.dispatch(action);
+  }
+
+  /**
+   *
+   * @param {Object} context
+   * @return {void}
+   */
+  setContext(context) {
+    this._context = { ...this._context, ...context };
   }
 
   /**
