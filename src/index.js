@@ -1,4 +1,4 @@
-import { isFunction, isPlainObject, isString } from 'lodash';
+import { castArray, isFunction, isPlainObject, isString } from 'lodash';
 import Action from './action';
 import Branch from './branch';
 import addBrowserEventListeners from './browser-event-listeners';
@@ -65,6 +65,23 @@ export default class Yallah {
    * @type {Map}
    */
   _tree = new Map();
+
+  /**
+   *
+   * @private
+   * @param {Branch} branch
+   * @return {void}
+   */
+  _addBranch(branch) {
+    if (!(branch instanceof Branch)) {
+      const errors = 'Yallah::createBranch::The branch name was invalid.';
+      logger.error(errors);
+      return;
+    }
+
+    branch.setContext(this._context);
+    this._tree.set(branch);
+  }
 
   /**
    *
@@ -147,18 +164,15 @@ export default class Yallah {
 
   /**
    *
-   * @param {Branch} branch
+   * @param {Array<Branch>|Branch} branch
    * @return {void}
    */
   addBranch(branch) {
-    if (!(branch instanceof Branch)) {
-      const errors = 'Yallah::createBranch::The branch name was invalid.';
-      logger.error(errors);
-      return;
-    }
+    const branches = castArray(branch);
 
-    branch.setContext(this._context);
-    this._tree.set(branch);
+    branches.forEach((value) => {
+      this._addBranch(value);
+    });
   }
 
   /**

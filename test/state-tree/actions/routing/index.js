@@ -46,7 +46,7 @@ export const go = function go(index) {
  * @param {Object} state
  * @return {Object}
  */
-export const push = function push(url, state) {
+export const push = function push(url, state = {}) {
   return { type: GO, payload: { state, url } };
 };
 
@@ -56,6 +56,6 @@ export const push = function push(url, state) {
  * @param {Object} state
  * @return {Object}
  */
-export const replace = function replace(url, state) {
+export const replace = function replace(url, state = {}) {
   return { type: GO, payload: { state, url } };
 };
