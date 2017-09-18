@@ -1,4 +1,4 @@
-import { isObjectLike } from 'lodash';
+import { isArray, isObjectLike } from 'lodash';
 
 /**
  *

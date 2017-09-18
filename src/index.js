@@ -1,7 +1,7 @@
 import { castArray, isFunction, isPlainObject, isString } from 'lodash';
 import Action from './action';
 import Branch from './branch';
-import addBrowserEventListeners from './browser-event-listeners';
+import addBrowserLifecycleEventListeners from './event-listeners/browser-lifecycle';
 import logger from './logger';
 import Subscriber from './subscriber';
 
@@ -20,12 +20,12 @@ export default class Yallah {
    */
   constructor({
     /**
-     * Optionally add common browser
+     * Optionally add browser lifecycle
      * event listeners.
      *
      * @type {boolean}
      */
-    browserEventListeners = true,
+    browserLifecycleEventListeners = true,
     /**
      * Whether to create a new instance of a
      * client or return the existing instance.
@@ -38,7 +38,7 @@ export default class Yallah {
 
     if (process.env.WEB_ENV) {
       this._addDispatchEventListener();
-      if (browserEventListeners) this._addBrowserEventListeners();
+      if (browserLifecycleEventListeners) this._addBrowserLifecycleEventListeners();
     }
 
     instance = this;
@@ -88,8 +88,8 @@ export default class Yallah {
    * @private
    * @return {void}
    */
-  _addBrowserEventListeners() {
-    addBrowserEventListeners(this._dispatch);
+  _addBrowserLifecycleEventListeners() {
+    addBrowserLifecycleEventListeners(this._dispatch);
   }
 
   /**

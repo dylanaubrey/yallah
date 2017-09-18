@@ -23,21 +23,21 @@ export const goForward = function goForward() {
 
 /**
  *
+ * @param {number} index
+ * @return {Object}
+ */
+export const go = function go(index) {
+  return { type: GO, payload: index };
+};
+
+/**
+ *
  * @param {Object} location
  * @param {string} action
  * @return {Object}
  */
 export const locationChange = function locationChange(location, action) {
   return { type: LOCATION_CHANGE, payload: { action, location } };
-};
-
-/**
- *
- * @param {number} index
- * @return {Object}
- */
-export const go = function go(index) {
-  return { type: GO, payload: index };
 };
 
 /**
