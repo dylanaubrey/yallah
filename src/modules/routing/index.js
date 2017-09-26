@@ -1,13 +1,15 @@
 import { createBrowserHistory, createMemoryHistory } from 'history';
 import { isNumber, isPlainObject, isString } from 'lodash';
 import { GO_BACK, GO_FORWARD, GO, PUSH, REPLACE, locationChange } from '../../actions/routing';
-import Branch from '../../../../src/branch';
-import logger from '../../../../src/logger';
+import { START } from '../../actions/container';
+import Module from '../../core/module';
+import logger from '../../logger';
 
+const routing = new Module('routing');
 const history = process.env.WEB_ENV ? createBrowserHistory() : createMemoryHistory();
 
-const routing = new Branch('routing', () => {
-  locationChange(history.location, 'INIT');
+routing.subscribe(START, () => {
+  routing.dispatch(locationChange(history.location, 'START'));
 
   history.listen((location, action) => {
     this.dispatch(locationChange(location, action));

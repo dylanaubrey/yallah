@@ -7,14 +7,14 @@ import {
   pageHide,
   online,
   offline,
-} from './actions';
+} from '../../actions/browser-lifecycle';
 
 /**
  *
  * @param {Function} dispatch
  * @return {void}
  */
-export default function addBrowserLifecycleEventListeners(dispatch) {
+export default async function addBrowserLifecycleEventListeners(dispatch) {
   document.addEventListener('DOMContentLoaded', (e) => {
     dispatch(domReady(e));
   });

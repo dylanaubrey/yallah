@@ -43,7 +43,7 @@ export default class Subscriber {
    * @param {Action} action
    * @return {void}
    */
-  async receive(action) {
+  async execute(action) {
     this._callback(action);
   }
 

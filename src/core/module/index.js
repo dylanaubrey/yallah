@@ -1,22 +1,19 @@
-import { isFunction } from 'lodash';
-import { deepFreeze } from '../helpers';
+import deepFreeze from '../../helpers';
 
 /**
  *
- * The Yallah branch
+ * The Yallah container module
  */
-export default class Branch {
+export default class Module {
   /**
    *
    * @constructor
    * @param {String} name
-   * @param {Function} callback
    * @return {Branch}
    */
-  constructor(name, callback) {
-    if (!name) throw new Error('Name is a mandatory argument for a branch.');
+  constructor(name) {
+    if (!name) throw new Error('Name is a mandatory argument for a module.');
     this._name = name;
-    if (isFunction(callback)) callback.call(this);
   }
 
   /**
@@ -29,9 +26,31 @@ export default class Branch {
   /**
    *
    * @private
+   * @type {string}
+   */
+  _name;
+
+  /**
+   *
+   * @private
    * @type {Object}
    */
   _state = {};
+
+  /**
+   *
+   * @private
+   * @type {Array<Object>}
+   */
+  _subscribers = [];
+
+  /**
+   *
+   * @return {string}
+   */
+  get name() {
+    return this._name;
+  }
 
   /**
    *
@@ -49,6 +68,16 @@ export default class Branch {
    */
   _setState(obj) {
     this._state = deepFreeze(obj);
+  }
+
+  /**
+   *
+   * @return {void}
+   */
+  addSubscribers() {
+    this._subscribers.forEach((subscriber) => {
+      this._context.subscribe(subscriber);
+    });
   }
 
   /**
@@ -85,6 +114,6 @@ export default class Branch {
    * @return {void}
    */
   subscribe(type, callback) {
-    this._context.subscribe({ callback, type });
+    this._subscribers.push({ callback, type });
   }
 }

@@ -31,9 +31,8 @@ module.exports = (config) => {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['PhantomJS'],
-    singleRun: true,
     concurrency: Infinity,
+    client: { captureConsole: true },
     coverageReporter: {
       reporters: [
         { type: 'lcov', dir: 'coverage/' },
