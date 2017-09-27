@@ -1,4 +1,4 @@
 # yallah
-An isomorphic, dynamic, event-driven state tree.
+A browser application container.
 
 ### More to follow...

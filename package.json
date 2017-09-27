@@ -1,7 +1,7 @@
 {
   "name": "yallah",
   "version": "0.0.1",
-  "description": "An isomorphic, dynamic, event-driven data model.",
+  "description": "A browser application container.",
   "author": "Dylan Aubrey <dylanaubrey@gmail.com>",
   "license": "MIT",
   "homepage": "https://github.com/dylanaubrey/yallah",
