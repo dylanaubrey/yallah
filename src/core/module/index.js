@@ -12,7 +12,7 @@ export default class Module {
    * @return {Branch}
    */
   constructor(name) {
-    if (!name) throw new Error('Name is a mandatory argument for a module.');
+    if (!name) throw new Error('Yallah::Module::Name is a mandatory argument for a module.');
     this._name = name;
   }
 
@@ -114,6 +114,6 @@ export default class Module {
    * @return {void}
    */
   subscribe(type, callback) {
-    this._subscribers.push({ callback, type });
+    this._subscribers.push({ callback, name: this._name, type });
   }
 }

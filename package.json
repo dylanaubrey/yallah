@@ -17,15 +17,15 @@
   "browser": "lib/browser/index.js",
   "keywords": [
     "isomorphic",
-    "data model",
-    "event-driven"
+    "progressive web app",
+    "PWA"
   ],
   "scripts": {
     "build": "npm run test && npm run transpile",
     "clean": "rimraf lib/*",
     "coverage:node": "cross-env BABEL_ENV=test ISO_LOG=false nyc mocha test/specs/index.js",
-    "coverage:web": "cross-env BABEL_ENV=test karma start --single-run --browsers PhantomJS",
-    "coverage:web:debug": "cross-env BABEL_ENV=test karma start --no-single-run --browsers Chrome",
+    "coverage:web": "cross-env BABEL_ENV=browser karma start --single-run --browsers PhantomJS",
+    "coverage:web:debug": "cross-env BABEL_ENV=browser karma start --no-single-run --browsers Chrome",
     "lint": "eslint . --fix",
     "publish:pkg": "npm run build && npm publish",
     "test": "npm run lint && npm run coverage:web",

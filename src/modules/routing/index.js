@@ -1,5 +1,5 @@
 import { createBrowserHistory, createMemoryHistory } from 'history';
-import { isNumber, isPlainObject, isString } from 'lodash';
+import { isEqual, isNumber, isPlainObject, isString } from 'lodash';
 import { GO_BACK, GO_FORWARD, GO, PUSH, REPLACE, locationChange } from '../../actions/routing';
 import { START } from '../../actions/container';
 import Module from '../../core/module';
@@ -9,10 +9,13 @@ const routing = new Module('routing');
 const history = process.env.WEB_ENV ? createBrowserHistory() : createMemoryHistory();
 
 routing.subscribe(START, () => {
-  routing.dispatch(locationChange(history.location, 'START'));
+  routing.setState(history.location);
+  routing.dispatch(locationChange(routing.state, 'START'));
 
   history.listen((location, action) => {
-    this.dispatch(locationChange(location, action));
+    if (isEqual(location, routing.state)) return;
+    routing.setState(location);
+    routing.dispatch(locationChange(routing.state, action));
   });
 });
 

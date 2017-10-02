@@ -48,7 +48,11 @@ export default class Yallah {
    * @private
    * @type {Object}
    */
-  _context = { dispatch: this._dispatch, subscribe: this._subscribe };
+  _context = {
+    dispatch: this._dispatch,
+    getState: this._getState,
+    subscribe: this._subscribe,
+  };
 
   /**
    *
@@ -88,6 +92,13 @@ export default class Yallah {
   /**
    *
    * @private
+   * @type {boolean}
+   */
+  _started = false;
+
+  /**
+   *
+   * @private
    * @type {Object}
    */
   _subscribers = {};
@@ -100,8 +111,7 @@ export default class Yallah {
    */
   _addModule(mod) {
     if (!(mod instanceof Module)) {
-      const errors = 'Yallah::_addModule::The module was invalid.';
-      logger.error(errors);
+      logger.error('Yallah::_addModule::The module was invalid.');
       return;
     }
 
@@ -128,8 +138,7 @@ export default class Yallah {
       const defaultModule = this._defaultModules[name];
 
       if (!defaultModule) {
-        const errors = 'Yallah::_addDefaultModules::The default module name was invalid.';
-        logger.error(errors);
+        logger.error('Yallah::_addDefaultModules::The default module name was invalid.');
         return;
       }
 
@@ -187,15 +196,19 @@ export default class Yallah {
    * @return {void}
    */
   async _dispatch({ error, meta, payload, type }) {
-    const action = new Action({ error, meta, payload, type });
-
-    if (!action.valid()) {
-      const errors = 'Yallah::_dispatch::The action was invalid.';
-      logger.error(errors);
+    if (!_this._started) {
+      logger.info('Yallah::_dispatch::The application has not started.');
       return;
     }
 
-    this._distribute(action);
+    const action = new Action({ error, meta, payload, type });
+
+    if (!action.valid()) {
+      logger.error('Yallah::_dispatch::The action was invalid.');
+      return;
+    }
+
+    _this._distribute(action);
   }
 
   /**
@@ -211,6 +224,27 @@ export default class Yallah {
     subscribers.forEach((subscriber) => {
       subscriber.execute(action);
     });
+  }
+
+  /**
+   *
+   * @param {string} [moduleName]
+   * @return {Object}
+   */
+  _getState(moduleName) {
+    if (!_this._started) {
+      logger.info('Yallah::_getState::The application has not started.');
+      return undefined;
+    }
+
+    if (moduleName) return _this._modules[moduleName];
+    const state = {};
+
+    Object.keys(_this._modules).forEach((name) => {
+      state[name] = _this._modules[name].state;
+    });
+
+    return state;
   }
 
   /**
@@ -231,21 +265,26 @@ export default class Yallah {
    * @private
    * @param {Object} args
    * @param {Function} args.callback
+   * @param {string} args.name
    * @param {string} args.type
    * @return {void}
    */
-  _subscribe({ callback, type }) {
-    const subscriber = new Subscriber({ callback, type });
-
-    if (!subscriber.valid()) {
-      const errors = 'Yallah::_subscribe::The subscriber was invalid.';
-      logger.error(errors);
+  _subscribe({ callback, name, type }) {
+    if (!_this._started) {
+      logger.info('Yallah::_subscribe::The application has not started.');
       return;
     }
 
-    const subscribers = this._subscribers[subscriber.type] || [];
+    const subscriber = new Subscriber({ callback, name, type });
+
+    if (!subscriber.valid()) {
+      logger.error('Yallah::_subscribe::The subscriber was invalid.');
+      return;
+    }
+
+    const subscribers = _this._subscribers[subscriber.type] || [];
     subscribers.push(subscriber);
-    this._subscribers[subscriber.type] = subscribers;
+    _this._subscribers[subscriber.type] = subscribers;
   }
 
   /**
@@ -256,15 +295,19 @@ export default class Yallah {
    * @return {void}
    */
   addEventListener(target, type, callback) {
-    const listener = new Listener({ callback, target, type });
-
-    if (!listener.valid()) {
-      const errors = 'Yallah::addEventListener::The listener was invalid.';
-      logger.error(errors);
+    if (!this._started) {
+      logger.info('Yallah::addEventListener::The application has not started.');
       return;
     }
 
-    this._eventListeners.add(listener);
+    const listener = new Listener({ callback, target, type });
+
+    if (!listener.valid()) {
+      logger.error('Yallah::addEventListener::The listener was invalid.');
+      return;
+    }
+
+    this._eventListeners.push(listener);
   }
 
   /**
@@ -291,16 +334,19 @@ export default class Yallah {
 
   /**
    *
+   * @param {string} [moduleName]
    * @return {Object}
    */
-  getState() {
-    const state = {};
+  getState(moduleName) {
+    return this._getState(moduleName);
+  }
 
-    this._modules.forEach((mod, moduleName) => {
-      state[moduleName] = mod.state;
-    });
+  /**
+   *
+   * @return {void}
+   */
+  reset() {
 
-    return state;
   }
 
   /**
@@ -310,8 +356,7 @@ export default class Yallah {
    */
   setInitialState(initialState) {
     if (!isPlainObject(initialState)) {
-      const errors = 'Yallah::setInitialState::The initial state was invalid.';
-      logger.error(errors);
+      logger.error('Yallah::setInitialState::The initial state was invalid.');
       return;
     }
 
@@ -330,6 +375,15 @@ export default class Yallah {
       this._setInitialState(),
     ]);
 
+    this._started = true;
     this._dispatch(start());
+  }
+
+  /**
+   *
+   * @return {void}
+   */
+  stop() {
+
   }
 }

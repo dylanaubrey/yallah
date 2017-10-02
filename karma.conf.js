@@ -5,11 +5,12 @@ module.exports = (config) => {
     basePath: '',
     frameworks: ['mocha', 'chai', 'sinon'],
     files: [
-      'test/specs/**/*',
+      'node_modules/babel-polyfill/dist/polyfill.js',
+      'test/**/*',
     ],
     preprocessors: {
       'src/**/*': ['babel', 'coverage'],
-      'test/specs/**/*': ['webpack', 'sourcemap'],
+      'test/**/*': ['webpack', 'sourcemap'],
     },
     webpack: {
       devtool: 'inline-source-map',
@@ -21,8 +22,8 @@ module.exports = (config) => {
       },
       plugins: [
         new webpack.EnvironmentPlugin({
-          WEB_ENV: true,
           ISO_LOG: false,
+          WEB_ENV: true,
         }),
       ],
     },

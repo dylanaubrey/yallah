@@ -20,6 +20,12 @@ export default class Subscriber {
      */
     callback,
     /**
+     * Name of the subscriber.
+     *
+     * @type {string}
+     */
+    name,
+    /**
      * Action to subscribe to.
      *
      * @type {string}
@@ -27,6 +33,7 @@ export default class Subscriber {
     type,
   } = {}) {
     this._callback = callback;
+    this._name = name;
     this._type = type;
   }
 
@@ -52,6 +59,6 @@ export default class Subscriber {
    * @return {boolean}
    */
   valid() {
-    return isString(this._type) && isFunction(this._callback);
+    return isString(this._type) && isString(this._name) && isFunction(this._callback);
   }
 }
