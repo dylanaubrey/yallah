@@ -14,7 +14,7 @@ import {
  * @param {Function} dispatch
  * @return {void}
  */
-export default async function addBrowserLifecycleEventListeners(dispatch) {
+export async function addBrowserLifecycleEventListeners(dispatch) {
   document.addEventListener('DOMContentLoaded', (e) => {
     dispatch(domReady(e));
   });
@@ -44,6 +44,45 @@ export default async function addBrowserLifecycleEventListeners(dispatch) {
   });
 
   window.addEventListener('offline', (e) => {
+    dispatch(offline(e));
+  });
+}
+
+/**
+ *
+ * @param {Function} dispatch
+ * @return {void}
+ */
+export default async function removeBrowserLifecycleEventListeners(dispatch) {
+  document.removeEventListener('DOMContentLoaded', (e) => {
+    dispatch(domReady(e));
+  });
+
+  window.removeEventListener('load', (e) => {
+    dispatch(load(e));
+  });
+
+  window.removeEventListener('beforeunload', (e) => {
+    dispatch(beforeUnload(e));
+  });
+
+  window.removeEventListener('unload', (e) => {
+    dispatch(unload(e));
+  });
+
+  window.removeEventListener('pageshow', (e) => {
+    dispatch(pageShow(e));
+  });
+
+  window.removeEventListener('pagehide', (e) => {
+    dispatch(pageHide(e));
+  });
+
+  window.removeEventListener('online', (e) => {
+    dispatch(online(e));
+  });
+
+  window.removeEventListener('offline', (e) => {
     dispatch(offline(e));
   });
 }

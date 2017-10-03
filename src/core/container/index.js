@@ -1,6 +1,16 @@
-import { castArray, isPlainObject } from 'lodash';
-import { start } from '../../actions/container';
-import addBrowserLifecycleEventListeners from '../../event-listeners/browser-lifecycle';
+import { castArray, isArray, isPlainObject } from 'lodash';
+import { start, stop } from '../../actions/container';
+
+import {
+  addBrowserLifecycleEventListeners,
+  removeBrowserLifecycleEventListeners,
+} from '../../event-listeners/browser-lifecycle';
+
+import {
+  addDispatchEventListener,
+  removeDispatchEventListeners,
+} from '../../event-listeners/dispatch';
+
 import routing from '../../modules/routing';
 import logger from '../../logger';
 import Action from '../action';
@@ -38,7 +48,7 @@ export default class Yallah {
     newInstance = false,
   } = {}) {
     if (_this && !newInstance) return _this;
-    this._defaultModuleNames = defaultModuleNames;
+    this._addDefaultModules(defaultModuleNames);
     _this = this;
     return _this;
   }
@@ -73,7 +83,7 @@ export default class Yallah {
    * @private
    * @type {Array<Listener>}
    */
-  _eventListeners = [];
+  _listeners = [];
 
   /**
    *
@@ -106,35 +116,25 @@ export default class Yallah {
   /**
    *
    * @private
-   * @param {Module} mod
    * @return {void}
    */
-  _addModule(mod) {
-    if (!(mod instanceof Module)) {
-      logger.error('Yallah::_addModule::The module was invalid.');
-      return;
-    }
-
-    mod.setContext(this._context);
-    this._modules[mod.name] = mod;
-  }
-
-  /**
-   *
-   * @private
-   * @return {void}
-   */
-  _addBrowserLifecycleEventListeners() {
+  async _addBrowserLifecycleEventListeners() {
     addBrowserLifecycleEventListeners(this._dispatch);
   }
 
   /**
    *
    * @private
+   * @param {Array<string>} names
    * @return {void}
    */
-  async _addDefaultModules() {
-    this._defaultModuleNames.forEach((name) => {
+  async _addDefaultModules(names) {
+    if (!isArray(names)) {
+      logger.error('Yallah::_addDefaultModules::The default module names were invalid.');
+      return;
+    }
+
+    names.forEach((name) => {
       const defaultModule = this._defaultModules[name];
 
       if (!defaultModule) {
@@ -151,10 +151,8 @@ export default class Yallah {
    * @private
    * @return {void}
    */
-  _addDispatchEventListener() {
-    window.addEventListener('dispatch', ({ action }) => {
-      this._dispatch(action);
-    });
+  async _addDispatchEventListener() {
+    addDispatchEventListener(this._dispatch);
   }
 
   /**
@@ -162,16 +160,32 @@ export default class Yallah {
    * @private
    * @return {void}
    */
-  async _addEventListeners() {
+  async _addListeners() {
     if (!process.env.WEB_ENV) return;
     this._addBrowserLifecycleEventListeners();
     this._addDispatchEventListener();
 
-    this._eventListeners.forEach(({ target, type, callback }) => {
+    this._listeners.forEach(({ target, type, callback }) => {
       target.addEventListener(type, (e) => {
         callback(e);
       });
     });
+  }
+
+  /**
+   *
+   * @private
+   * @param {Module} mod
+   * @return {void}
+   */
+  async _addModule(mod) {
+    if (!(mod instanceof Module)) {
+      logger.error('Yallah::_addModule::The module was invalid.');
+      return;
+    }
+
+    mod.setContext(this._context);
+    this._modules[mod.name] = mod;
   }
 
   /**
@@ -252,9 +266,64 @@ export default class Yallah {
    * @private
    * @return {void}
    */
+  async _removeBrowserLifecycleEventListeners() {
+    removeBrowserLifecycleEventListeners(this._dispatch);
+  }
+
+  /**
+   *
+   * @private
+   * @return {void}
+   */
+  async _removeDispatchEventListener() {
+    removeDispatchEventListeners(this._dispatch);
+  }
+
+  /**
+   *
+   * @private
+   * @return {void}
+   */
+  async _removeListeners() {
+    if (!process.env.WEB_ENV) return;
+    this._removeBrowserLifecycleEventListeners();
+    this._removeDispatchEventListener();
+
+    this._listeners.forEach(({ target, type, callback }) => {
+      target.removeEventListener(type, (e) => {
+        callback(e);
+      });
+    });
+  }
+
+  /**
+   *
+   * @private
+   * @return {void}
+   */
+  async _resetState() {
+    Object.keys(this._modules).forEach((moduleName) => {
+      const mod = this._modules[moduleName];
+      mod.resetState();
+    });
+  }
+
+  /**
+   *
+   * @private
+   * @return {void}
+   */
+  async _removeSubscribers() {
+    this._subscribers = {};
+  }
+
+  /**
+   *
+   * @private
+   * @return {void}
+   */
   async _setInitialState() {
-    Object.keys(this._initialState).forEach((moduleName) => {
-      if (!this._modules[moduleName]) return;
+    Object.keys(this._modules).forEach((moduleName) => {
       const mod = this._modules[moduleName];
       mod.setState(this._initialState[moduleName]);
     });
@@ -269,7 +338,7 @@ export default class Yallah {
    * @param {string} args.type
    * @return {void}
    */
-  _subscribe({ callback, name, type }) {
+  async _subscribe({ callback, name, type }) {
     if (!_this._started) {
       logger.info('Yallah::_subscribe::The application has not started.');
       return;
@@ -294,20 +363,20 @@ export default class Yallah {
    * @param {Function} callback
    * @return {void}
    */
-  addEventListener(target, type, callback) {
+  async listen(target, type, callback) {
     if (!this._started) {
-      logger.info('Yallah::addEventListener::The application has not started.');
+      logger.info('Yallah::listen::The application has not started.');
       return;
     }
 
     const listener = new Listener({ callback, target, type });
 
     if (!listener.valid()) {
-      logger.error('Yallah::addEventListener::The listener was invalid.');
+      logger.error('Yallah::listen::The listener was invalid.');
       return;
     }
 
-    this._eventListeners.push(listener);
+    this._listeners.push(listener);
   }
 
   /**
@@ -315,7 +384,7 @@ export default class Yallah {
    * @param {Array<Module>|Module} mod
    * @return {void}
    */
-  addModule(mod) {
+  async addModule(mod) {
     const mods = castArray(mod);
 
     mods.forEach((value) => {
@@ -345,8 +414,10 @@ export default class Yallah {
    *
    * @return {void}
    */
-  reset() {
-
+  async reset() {
+    this._removeListeners();
+    this._removeSubscribers();
+    this._resetState();
   }
 
   /**
@@ -354,7 +425,7 @@ export default class Yallah {
    * @param {Object} initialState
    * @return {void}
    */
-  setInitialState(initialState) {
+  async setInitialState(initialState) {
     if (!isPlainObject(initialState)) {
       logger.error('Yallah::setInitialState::The initial state was invalid.');
       return;
@@ -369,8 +440,7 @@ export default class Yallah {
    */
   async start() {
     await Promise.all([
-      this._addDefaultModules(),
-      this._addEventListeners(),
+      this._addListeners(),
       this._addSubscribers(),
       this._setInitialState(),
     ]);
@@ -383,7 +453,8 @@ export default class Yallah {
    *
    * @return {void}
    */
-  stop() {
-
+  async stop() {
+    this._started = false;
+    this._dispatch(stop());
   }
 }

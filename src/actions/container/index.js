@@ -1,5 +1,5 @@
-export const START = 'STATE_TREE/START';
-export const STOP = 'STATE_TREE/STOP';
+export const START = 'CONTAINER/START';
+export const STOP = 'CONTAINER/STOP';
 
 /**
  *

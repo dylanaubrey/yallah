@@ -1,4 +1,6 @@
+import { isPlainObject } from 'lodash';
 import deepFreeze from '../../helpers';
+import logger from '../../logger';
 
 /**
  *
@@ -63,10 +65,19 @@ export default class Module {
   /**
    *
    * @private
+   * @return {void}
+   */
+  async _resetState() {
+    this._state = {};
+  }
+
+  /**
+   *
+   * @private
    * @param {Object} obj
    * @return {void}
    */
-  _setState(obj) {
+  async _setState(obj) {
     this._state = deepFreeze(obj);
   }
 
@@ -74,7 +85,7 @@ export default class Module {
    *
    * @return {void}
    */
-  addSubscribers() {
+  async addSubscribers() {
     this._subscribers.forEach((subscriber) => {
       this._context.subscribe(subscriber);
     });
@@ -91,10 +102,18 @@ export default class Module {
 
   /**
    *
+   * @return {void}
+   */
+  async resetState() {
+    this._resetState();
+  }
+
+  /**
+   *
    * @param {Object} context
    * @return {void}
    */
-  setContext(context) {
+  async setContext(context) {
     this._context = { ...this._context, ...context };
   }
 
@@ -104,6 +123,11 @@ export default class Module {
    * @return {void}
    */
   async setState(obj) {
+    if (!isPlainObject(obj)) {
+      logger.info('Yallah::setState::The application has not started.');
+      return;
+    }
+
     this._setState(obj);
   }
 
@@ -113,7 +137,7 @@ export default class Module {
    * @param {Function} callback
    * @return {void}
    */
-  subscribe(type, callback) {
+  async subscribe(type, callback) {
     this._subscribers.push({ callback, name: this._name, type });
   }
 }
