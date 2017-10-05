@@ -53,7 +53,7 @@ export async function addBrowserLifecycleEventListeners(dispatch) {
  * @param {Function} dispatch
  * @return {void}
  */
-export default async function removeBrowserLifecycleEventListeners(dispatch) {
+export async function removeBrowserLifecycleEventListeners(dispatch) {
   document.removeEventListener('DOMContentLoaded', (e) => {
     dispatch(domReady(e));
   });

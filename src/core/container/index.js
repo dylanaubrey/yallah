@@ -8,7 +8,7 @@ import {
 
 import {
   addDispatchEventListener,
-  removeDispatchEventListeners,
+  removeDispatchEventListener,
 } from '../../event-listeners/dispatch';
 
 import routing from '../../modules/routing';
@@ -17,6 +17,8 @@ import Action from '../action';
 import Listener from '../listener';
 import Module from '../module';
 import Subscriber from '../subscriber';
+
+require('es6-promise').polyfill();
 
 let _this;
 
@@ -130,7 +132,7 @@ export default class Yallah {
    */
   async _addDefaultModules(names) {
     if (!isArray(names)) {
-      logger.error('Yallah::_addDefaultModules::The default module names were invalid.');
+      logger.error('Yallah::container::_addDefaultModules::The default module names were invalid.');
       return;
     }
 
@@ -138,7 +140,7 @@ export default class Yallah {
       const defaultModule = this._defaultModules[name];
 
       if (!defaultModule) {
-        logger.error('Yallah::_addDefaultModules::The default module name was invalid.');
+        logger.error('Yallah::container::_addDefaultModules::The default module name was invalid.');
         return;
       }
 
@@ -180,7 +182,7 @@ export default class Yallah {
    */
   async _addModule(mod) {
     if (!(mod instanceof Module)) {
-      logger.error('Yallah::_addModule::The module was invalid.');
+      logger.error('Yallah::container::_addModule::The module was invalid.');
       return;
     }
 
@@ -211,14 +213,14 @@ export default class Yallah {
    */
   async _dispatch({ error, meta, payload, type }) {
     if (!_this._started) {
-      logger.info('Yallah::_dispatch::The application has not started.');
+      logger.info('Yallah::container::_dispatch::The application has not started.');
       return;
     }
 
     const action = new Action({ error, meta, payload, type });
 
     if (!action.valid()) {
-      logger.error('Yallah::_dispatch::The action was invalid.');
+      logger.error('Yallah::container::_dispatch::The action was invalid.');
       return;
     }
 
@@ -247,7 +249,7 @@ export default class Yallah {
    */
   _getState(moduleName) {
     if (!_this._started) {
-      logger.info('Yallah::_getState::The application has not started.');
+      logger.info('Yallah::container::_getState::The application has not started.');
       return undefined;
     }
 
@@ -276,7 +278,7 @@ export default class Yallah {
    * @return {void}
    */
   async _removeDispatchEventListener() {
-    removeDispatchEventListeners(this._dispatch);
+    removeDispatchEventListener(this._dispatch);
   }
 
   /**
@@ -340,14 +342,14 @@ export default class Yallah {
    */
   async _subscribe({ callback, name, type }) {
     if (!_this._started) {
-      logger.info('Yallah::_subscribe::The application has not started.');
+      logger.info('Yallah::container::_subscribe::The application has not started.');
       return;
     }
 
     const subscriber = new Subscriber({ callback, name, type });
 
     if (!subscriber.valid()) {
-      logger.error('Yallah::_subscribe::The subscriber was invalid.');
+      logger.error('Yallah::container::_subscribe::The subscriber was invalid.');
       return;
     }
 
@@ -364,15 +366,10 @@ export default class Yallah {
    * @return {void}
    */
   async listen(target, type, callback) {
-    if (!this._started) {
-      logger.info('Yallah::listen::The application has not started.');
-      return;
-    }
-
     const listener = new Listener({ callback, target, type });
 
     if (!listener.valid()) {
-      logger.error('Yallah::listen::The listener was invalid.');
+      logger.error('Yallah::container::listen::The listener was invalid.');
       return;
     }
 
@@ -427,7 +424,7 @@ export default class Yallah {
    */
   async setInitialState(initialState) {
     if (!isPlainObject(initialState)) {
-      logger.error('Yallah::setInitialState::The initial state was invalid.');
+      logger.error('Yallah::container::setInitialState::The initial state was invalid.');
       return;
     }
 
@@ -439,13 +436,14 @@ export default class Yallah {
    * @return {void}
    */
   async start() {
+    this._started = true;
+
     await Promise.all([
       this._addListeners(),
       this._addSubscribers(),
       this._setInitialState(),
     ]);
 
-    this._started = true;
     this._dispatch(start());
   }
 

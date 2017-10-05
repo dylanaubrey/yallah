@@ -3,6 +3,7 @@ import dirtyChai from 'dirty-chai';
 import sinonChai from 'sinon-chai';
 import yallah from '../container';
 import Yallah from '../../src';
+import Module from '../../src/core/module';
 
 chai.use(dirtyChai);
 chai.use(sinonChai);
@@ -13,7 +14,7 @@ describe('when the app container class is initialised', () => {
   });
 
   it('should add/have added its modules', () => {
-    // TODO
+    expect(yallah._modules.routing).to.be.instanceOf(Module);
   });
 });
 
@@ -22,13 +23,13 @@ describe('when the app container is started', () => {
     await yallah.start();
   });
 
-  afterEach(() => {
-    yallah.stop();
-    yallah.reset();
+  afterEach(async () => {
+    await yallah.stop();
+    await yallah.reset();
   });
 
   it('should add the event listeners', () => {
-    // TODO
+    expect(window.dispatch).to.be.a('function');
   });
 
   it('should add the subscribers', () => {

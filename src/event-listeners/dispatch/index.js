@@ -3,7 +3,7 @@
  * @param {Function} dispatch
  * @return {void}
  */
-export async function addDispatchEventListeners(dispatch) {
+export async function addDispatchEventListener(dispatch) {
   window.addEventListener('dispatch', ({ action }) => {
     dispatch(action);
   });
@@ -14,7 +14,7 @@ export async function addDispatchEventListeners(dispatch) {
  * @param {Function} dispatch
  * @return {void}
  */
-export async function removeDispatchEventListeners(dispatch) {
+export async function removeDispatchEventListener(dispatch) {
   window.removeEventListener('dispatch', ({ action }) => {
     dispatch(action);
   });

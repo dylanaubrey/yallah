@@ -35,6 +35,7 @@
     "transpile:module": " cross-env BABEL_ENV=module babel src --out-dir lib/module --copy-files"
   },
   "dependencies": {
+    "es6-promise": "^4.1.1",
     "history": "^4.7.2",
     "iso-logger": "0.0.8",
     "lodash": "^4.17.4"
