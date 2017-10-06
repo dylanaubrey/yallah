@@ -13,7 +13,7 @@ module.exports = (config) => {
       'test/**/*': ['webpack', 'sourcemap'],
     },
     webpack: {
-      devtool: 'inline-source-map',
+      devtool: 'cheap-module-eval-source-map',
       module: {
         rules: [{
           test: /\.js$/,

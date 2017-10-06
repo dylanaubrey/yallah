@@ -132,7 +132,8 @@ export default class Yallah {
    */
   async _addDefaultModules(names) {
     if (!isArray(names)) {
-      logger.error('Yallah::container::_addDefaultModules::The default module names were invalid.');
+      const error = 'Yallah::container::_addDefaultModules::The default module names were invalid.';
+      logger.error(error, { names });
       return;
     }
 
@@ -140,7 +141,8 @@ export default class Yallah {
       const defaultModule = this._defaultModules[name];
 
       if (!defaultModule) {
-        logger.error('Yallah::container::_addDefaultModules::The default module name was invalid.');
+        const error = 'Yallah::container::_addDefaultModules::The default module name was invalid.';
+        logger.error(error, { name });
         return;
       }
 
@@ -182,7 +184,7 @@ export default class Yallah {
    */
   async _addModule(mod) {
     if (!(mod instanceof Module)) {
-      logger.error('Yallah::container::_addModule::The module was invalid.');
+      logger.error('Yallah::container::_addModule::The module was invalid.', { module: mod });
       return;
     }
 
@@ -211,16 +213,16 @@ export default class Yallah {
    * @param {Object} args.type
    * @return {void}
    */
-  async _dispatch({ error, meta, payload, type }) {
+  async _dispatch(args) {
     if (!_this._started) {
-      logger.info('Yallah::container::_dispatch::The application has not started.');
+      logger.info('Yallah::container::_dispatch::The application has not started.', { args });
       return;
     }
 
-    const action = new Action({ error, meta, payload, type });
+    const action = new Action(args);
 
     if (!action.valid()) {
-      logger.error('Yallah::container::_dispatch::The action was invalid.');
+      logger.error('Yallah::container::_dispatch::The action was invalid.', { action });
       return;
     }
 
@@ -249,7 +251,8 @@ export default class Yallah {
    */
   _getState(moduleName) {
     if (!_this._started) {
-      logger.info('Yallah::container::_getState::The application has not started.');
+      const info = 'Yallah::container::_getState::The application has not started.';
+      logger.info(info, { args: moduleName });
       return undefined;
     }
 
@@ -327,7 +330,7 @@ export default class Yallah {
   async _setInitialState() {
     Object.keys(this._modules).forEach((moduleName) => {
       const mod = this._modules[moduleName];
-      mod.setState(this._initialState[moduleName]);
+      if (this._initialState[moduleName]) mod._setState(this._initialState[moduleName]);
     });
   }
 
@@ -340,16 +343,16 @@ export default class Yallah {
    * @param {string} args.type
    * @return {void}
    */
-  async _subscribe({ callback, name, type }) {
+  async _subscribe(args) {
     if (!_this._started) {
-      logger.info('Yallah::container::_subscribe::The application has not started.');
+      logger.info('Yallah::container::_subscribe::The application has not started.', { args });
       return;
     }
 
-    const subscriber = new Subscriber({ callback, name, type });
+    const subscriber = new Subscriber(args);
 
     if (!subscriber.valid()) {
-      logger.error('Yallah::container::_subscribe::The subscriber was invalid.');
+      logger.error('Yallah::container::_subscribe::The subscriber was invalid.', { subscriber });
       return;
     }
 
@@ -369,7 +372,8 @@ export default class Yallah {
     const listener = new Listener({ callback, target, type });
 
     if (!listener.valid()) {
-      logger.error('Yallah::container::listen::The listener was invalid.');
+      const error = 'Yallah::container::listen::The listener was invalid.';
+      logger.error(error, { args: { target, type, callback } });
       return;
     }
 
@@ -424,7 +428,8 @@ export default class Yallah {
    */
   async setInitialState(initialState) {
     if (!isPlainObject(initialState)) {
-      logger.error('Yallah::container::setInitialState::The initial state was invalid.');
+      const error = 'Yallah::container::setInitialState::The initial state was invalid.';
+      logger.error(error, { initialState });
       return;
     }
 
@@ -452,7 +457,7 @@ export default class Yallah {
    * @return {void}
    */
   async stop() {
+    await this._dispatch(stop());
     this._started = false;
-    this._dispatch(stop());
   }
 }

@@ -124,7 +124,7 @@ export default class Module {
    */
   async setState(obj) {
     if (!isPlainObject(obj)) {
-      logger.info('Yallah::module::setState::The application has not started.');
+      logger.info('Yallah::module::setState::The state object was invalid.', { state: obj });
       return;
     }
 
