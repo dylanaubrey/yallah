@@ -256,7 +256,7 @@ export default class Yallah {
       return undefined;
     }
 
-    if (moduleName) return _this._modules[moduleName];
+    if (moduleName) return _this._modules[moduleName].state;
     const state = {};
 
     Object.keys(_this._modules).forEach((name) => {

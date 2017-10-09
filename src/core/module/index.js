@@ -1,5 +1,5 @@
 import { isPlainObject } from 'lodash';
-import deepFreeze from '../../helpers';
+import { deepFreeze } from '../../helpers';
 import logger from '../../logger';
 
 /**

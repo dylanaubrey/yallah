@@ -5,7 +5,7 @@ import { isArray, isObjectLike } from 'lodash';
  * @param {Object} obj
  * @return {Object}
  */
-export default function deepFreeze(obj) {
+export function deepFreeze(obj) {
   const propNames = Object.getOwnPropertyNames(obj);
 
   propNames.forEach((name) => {
@@ -21,4 +21,14 @@ export default function deepFreeze(obj) {
   });
 
   return Object.freeze(obj);
+}
+
+/**
+ *
+ * @param {string} type
+ * @param {Object} action
+ * @return {CustomEvent}
+ */
+export function createEvent(type, action) {
+  return new CustomEvent(type, { detail: { action } });
 }

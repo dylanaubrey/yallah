@@ -1,3 +1,4 @@
+const { resolve } = require('path');
 const webpack = require('webpack'); // eslint-disable-line import/no-extraneous-dependencies
 
 module.exports = (config) => {
@@ -17,6 +18,10 @@ module.exports = (config) => {
       module: {
         rules: [{
           test: /\.js$/,
+          include: [
+            resolve(__dirname, 'src'),
+            resolve(__dirname, 'test'),
+          ],
           use: { loader: 'babel-loader' },
         }],
       },

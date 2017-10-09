@@ -4,7 +4,7 @@
  * @return {void}
  */
 export async function addDispatchEventListener(dispatch) {
-  window.addEventListener('dispatch', ({ action }) => {
+  window.addEventListener('dispatch', ({ detail: { action } }) => {
     dispatch(action);
   });
 }
@@ -15,7 +15,7 @@ export async function addDispatchEventListener(dispatch) {
  * @return {void}
  */
 export async function removeDispatchEventListener(dispatch) {
-  window.removeEventListener('dispatch', ({ action }) => {
+  window.removeEventListener('dispatch', ({ detail: { action } }) => {
     dispatch(action);
   });
 }
