@@ -1,11 +1,10 @@
 import chai, { expect } from 'chai';
 import dirtyChai from 'dirty-chai';
 import sinonChai from 'sinon-chai';
-import yallah from '../container';
-import { turnOn } from '../actions/alfa';
-import Yallah from '../../src';
-import Module from '../../src/core/module';
-import { createEvent } from '../../src/helpers';
+import yallah from '../../container';
+import userState from '../../state/user/index.json';
+import Yallah from '../../../src';
+import Module from '../../../src/core/module';
 
 chai.use(dirtyChai);
 chai.use(sinonChai);
@@ -17,6 +16,15 @@ describe('when the app container class is initialised', () => {
 
   it('should add/have added its modules', () => {
     expect(yallah._modules.routing).to.be.instanceOf(Module);
+    expect(yallah._modules.user).to.be.instanceOf(Module);
+  });
+
+  it('should stage the event listeners', () => {
+    expect(yallah._listeners).to.be.lengthOf(1);
+  });
+
+  it('should stage the initial state', () => {
+    expect(yallah._initialState).to.eql({ user: userState });
   });
 });
 
@@ -30,18 +38,7 @@ describe('when the app container is started', () => {
     await yallah.reset();
   });
 
-  it('should add the event listeners', () => {
-    expect(yallah.getState('alfa')).to.eql({ on: false });
-    const ev = createEvent('dispatch', turnOn({ on: true }));
-    window.dispatchEvent(ev);
-    expect(yallah.getState('alfa')).to.eql({ on: true });
+  it('should add the subscribers', () => {
+    expect(Object.keys(yallah._subscribers)).to.be.lengthOf(7);
   });
-
-  // it('should add the subscribers', () => {
-  //   // TODO
-  // });
-
-  // it('should set the default state', () => {
-  //   // TODO
-  // });
 });

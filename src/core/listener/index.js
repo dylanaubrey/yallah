@@ -66,7 +66,7 @@ export default class Listener {
    * @return {boolean}
    */
   valid() {
-    return this._target instanceof EventTarget && isString(this._type)
-        && isFunction(this._callback);
+    return isFunction(this._target.addEventListener) && isString(this._type)
+      && isFunction(this._callback);
   }
 }

@@ -1,7 +1,7 @@
 export const GO_BACK = 'ROUTING/GO_BACK';
 export const GO_FORWARD = 'ROUTING/GO_FORWARD';
 export const GO = 'ROUTING/GO';
-export const LOCATION_CHANGE = 'ROUTING/LOCATION_CHANGE';
+export const ROUTE_CHANGE = 'ROUTING/ROUTE_CHANGE';
 export const PUSH = 'ROUTING/PUSH';
 export const REPLACE = 'ROUTING/REPLACE';
 
@@ -32,12 +32,11 @@ export const go = function go(index) {
 
 /**
  *
- * @param {Object} location
  * @param {string} action
  * @return {Object}
  */
-export const locationChange = function locationChange(location, action) {
-  return { type: LOCATION_CHANGE, payload: { action, location } };
+export const routeChange = function routeChange(action) {
+  return { type: ROUTE_CHANGE, payload: action };
 };
 
 /**

@@ -67,7 +67,7 @@ export default class Module {
    * @private
    * @return {void}
    */
-  async _resetState() {
+  _resetState() {
     this._state = {};
   }
 
@@ -77,8 +77,16 @@ export default class Module {
    * @param {Object} obj
    * @return {void}
    */
-  async _setState(obj) {
-    this._state = deepFreeze(obj);
+  _setState(obj) {
+    this._state = obj;
+  }
+
+  /**
+   *
+   * @return {Object}
+   */
+  appState() {
+    return this._context.getState();
   }
 
   /**
@@ -86,9 +94,7 @@ export default class Module {
    * @return {void}
    */
   async addSubscribers() {
-    this._subscribers.forEach((subscriber) => {
-      this._context.subscribe(subscriber);
-    });
+    await Promise.all(this._subscribers.map(subscriber => this._context.subscribe(subscriber)));
   }
 
   /**
@@ -97,14 +103,14 @@ export default class Module {
    * @return {void}
    */
   async dispatch(action) {
-    this._context.dispatch(action);
+    await this._context.dispatch(action);
   }
 
   /**
    *
    * @return {void}
    */
-  async resetState() {
+  resetState() {
     this._resetState();
   }
 
@@ -113,7 +119,7 @@ export default class Module {
    * @param {Object} context
    * @return {void}
    */
-  async setContext(context) {
+  setContext(context) {
     this._context = { ...this._context, ...context };
   }
 
@@ -122,7 +128,7 @@ export default class Module {
    * @param {Object} obj
    * @return {void}
    */
-  async setState(obj) {
+  setState(obj) {
     if (!isPlainObject(obj)) {
       logger.info('Yallah::module::setState::The state object was invalid.', { state: obj });
       return;
@@ -137,7 +143,7 @@ export default class Module {
    * @param {Function} callback
    * @return {void}
    */
-  async subscribe(type, callback) {
+  subscribe(type, callback) {
     this._subscribers.push({ callback, name: this._name, type });
   }
 }

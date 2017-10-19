@@ -38,7 +38,8 @@
     "es6-promise": "^4.1.1",
     "history": "^4.7.2",
     "iso-logger": "0.0.8",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "reselect": "^3.0.1"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

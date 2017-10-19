@@ -51,7 +51,7 @@ export default class Subscriber {
    * @return {void}
    */
   async execute(action) {
-    this._callback(action);
+    await this._callback(action);
   }
 
   /**

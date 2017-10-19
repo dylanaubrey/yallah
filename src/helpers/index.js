@@ -5,22 +5,37 @@ import { isArray, isObjectLike } from 'lodash';
  * @param {Object} obj
  * @return {Object}
  */
-export function deepFreeze(obj) {
+export async function deepFreeze(obj) {
   const propNames = Object.getOwnPropertyNames(obj);
 
-  propNames.forEach((name) => {
-    const propValue = obj[name];
-    if (!isObjectLike(propValue)) return;
-    deepFreeze(propValue);
-    if (!isArray(propValue)) return;
+  await Promise.all(
+    propNames.map(async (name) => {
+      const propValue = obj[name];
+      if (!isObjectLike(propValue)) return;
+      await deepFreeze(propValue);
+      if (!isArray(propValue)) return;
 
-    propValue.forEach((value) => {
-      if (!isObjectLike(value)) return;
-      deepFreeze(value);
-    });
-  });
+      await Promise.all(
+        propValue.map(async (value) => {
+          if (!isObjectLike(value)) return;
+          await deepFreeze(value);
+        }),
+      );
+    }),
+  );
 
   return Object.freeze(obj);
+}
+
+/**
+ *
+ * @param {Function} callback
+ * @return {void}
+ */
+export function createReducer(callback) {
+  return async (previousState, newState) => {
+    await callback(previousState, await deepFreeze(newState));
+  };
 }
 
 /**
