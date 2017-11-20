@@ -4,8 +4,6 @@ import Config from '../../config';
 import { deepFreeze } from '../../../helpers';
 import logger from '../../../logger';
 
-require('es6-promise').polyfill();
-
 let _this;
 
 /**

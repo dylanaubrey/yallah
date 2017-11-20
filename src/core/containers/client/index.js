@@ -15,8 +15,6 @@ import {
 
 import logger from '../../../logger';
 
-require('es6-promise').polyfill();
-
 let _this;
 
 /**
