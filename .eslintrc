@@ -10,8 +10,6 @@
   "parser": "babel-eslint",
   "rules": {
     // overrides
-    "class-methods-use-this": 0,
-    "linebreak-style": 0,
     "no-param-reassign": ["error", { "props": false }],
     "no-underscore-dangle": 0,
     "one-var": ["error", { "initialized": "never" }],
@@ -19,9 +17,10 @@
     // additional
     "require-jsdoc": ["error", {
       "require": {
-        "ArrowFunctionExpression": false,
+        "ArrowFunctionExpression": true,
         "ClassDeclaration": true,
         "FunctionDeclaration": true,
+        "FunctionExpression": true,
         "MethodDefinition": true
       }
     }],

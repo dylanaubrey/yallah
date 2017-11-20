@@ -1,3 +1,1 @@
-import Yallah from './core/container';
-
-export default Yallah;
+export { ClientContainer, ServerContainer } from './core/containers';

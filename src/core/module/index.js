@@ -1,5 +1,4 @@
 import { isPlainObject } from 'lodash';
-import { deepFreeze } from '../../helpers';
 import logger from '../../logger';
 
 /**
@@ -104,6 +103,15 @@ export default class Module {
    */
   async dispatch(action) {
     await this._context.dispatch(action);
+  }
+
+  /**
+   *
+   * @param {string} [key]
+   * @return {any}
+   */
+  getConfig(key) {
+    return this._context.getConfig(key);
   }
 
   /**

@@ -1,14 +1,15 @@
 import { click } from '../actions/user';
 import userModule from '../modules/user';
 import userState from '../state/user/index.json';
-import Yallah from '../../src';
+import { ClientContainer } from '../../src';
 
-const yallah = new Yallah();
-yallah.addModule([userModule]);
+const container = new ClientContainer();
+// container.addConfig([]);
+container.addModule([userModule]);
 
-yallah.listen(document, 'click', async (e) => {
-  yallah.dispatch(click(e));
+container.listen(document, 'click', async (e) => {
+  container.dispatch(click(e));
 });
 
-yallah.setInitialState({ user: userState });
-export default yallah;
+container.addInitialState({ user: userState });
+export default container;

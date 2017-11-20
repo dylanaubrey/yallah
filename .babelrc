@@ -42,7 +42,17 @@
       "presets": [
         ["env", {
           "debug": true,
-          "targets": { "node": "current" },
+          "targets": { "browsers": "last 4 versions" },
+          "useBuiltIns": true
+        }],
+        "stage-0"
+      ]
+    },
+    "debug": {
+      "presets": [
+        ["env", {
+          "debug": true,
+          "targets": { "chrome": 60 },
           "useBuiltIns": true
         }],
         "stage-0"
