@@ -8,28 +8,24 @@ import { cloneDeep, isArray, isFunction, isObjectLike } from 'lodash';
 export async function deepFreeze(obj) {
   const propNames = Object.getOwnPropertyNames(obj);
 
-  await Promise.all(
-    propNames.map(async (name) => {
-      const propValue = obj[name];
+  await Promise.all(propNames.map(async (name) => {
+    const propValue = obj[name];
 
-      if (isFunction(propValue)) {
-        delete obj[name];
-        return;
-      }
+    if (isFunction(propValue)) {
+      delete obj[name];
+      return;
+    }
 
-      if (!isObjectLike(propValue)) return;
-      await deepFreeze(propValue);
-      if (!isArray(propValue)) return;
+    if (!isObjectLike(propValue)) return;
+    await deepFreeze(propValue);
+    if (!isArray(propValue)) return;
 
-      obj[name] = await Promise.all(
-        propValue.reduce(value => !isFunction(value))
-          .map(async (value) => {
-            if (!isObjectLike(value)) return value;
-            return deepFreeze(value);
-          }),
-      );
-    }),
-  );
+    obj[name] = await Promise.all(propValue.reduce(value => !isFunction(value))
+      .map(async (value) => {
+        if (!isObjectLike(value)) return value;
+        return deepFreeze(value);
+      }));
+  }));
 
   return Object.freeze(obj);
 }
@@ -40,9 +36,10 @@ export async function deepFreeze(obj) {
  * @return {void}
  */
 export function createReducer(callback) {
-  return async (previousState, newState) => deepFreeze(
-    await callback(previousState, cloneDeep(newState)),
-  );
+  return async (previousState, newState) => deepFreeze(await callback(
+    previousState,
+    cloneDeep(newState),
+  ));
 }
 
 /**

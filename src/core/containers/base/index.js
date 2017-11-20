@@ -145,9 +145,8 @@ export default class BaseContainer {
    * @return {void}
    */
   async _addSubscribers() {
-    await Promise.all(
-      Object.keys(this._modules).map(moduleName => this._modules[moduleName].addSubscribers()),
-    );
+    await Promise.all(Object.keys(this._modules)
+      .map(moduleName => this._modules[moduleName].addSubscribers()));
   }
 
   /**
@@ -186,9 +185,7 @@ export default class BaseContainer {
     const subscribers = this._subscribers[action.type];
     if (!subscribers) return;
 
-    await Promise.all(
-      subscribers.map(subscriber => subscriber.execute(action)),
-    );
+    await Promise.all(subscribers.map(subscriber => subscriber.execute(action)));
   }
 
   /**

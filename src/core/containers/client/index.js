@@ -147,12 +147,10 @@ export default class ClientContainer extends BaseContainer {
    * @return {void}
    */
   async _setInitialState() {
-    await Promise.all(
-      Object.keys(this._modules).map(async (moduleName) => {
-        const mod = this._modules[moduleName];
-        if (this._initialState[moduleName]) await mod._setState(this._initialState[moduleName]);
-      }),
-    );
+    await Promise.all(Object.keys(this._modules).map(async (moduleName) => {
+      const mod = this._modules[moduleName];
+      if (this._initialState[moduleName]) await mod._setState(this._initialState[moduleName]);
+    }));
   }
 
   /**
