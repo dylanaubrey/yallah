@@ -1,3 +1,5 @@
+// @flow
+
 import { castArray, isArray } from 'lodash';
 import { start, stop } from '../../../actions/container';
 import routing from '../../../modules/routing';
@@ -5,105 +7,42 @@ import logger from '../../../logger';
 import Action from '../../action';
 import Module from '../../module';
 import Subscriber from '../../subscriber';
+import type { ActionArgs } from '../../action';
+import type { SubscriberArgs } from '../../subscriber';
 
 require('es6-promise').polyfill();
 
 let _this;
 
-/**
- *
- * The Yallah base app container
- */
+export type ContainerArgs = {
+  defaultModuleNames: string[],
+  newInstance: boolean,
+};
+
 export default class BaseContainer {
-  /**
-   *
-   * @constructor
-   * @param {Object} config
-   * @return {BaseContainer}
-   */
-  constructor({
-    /**
-     * Optional list of default modules
-     * to initialise in the state tree.
-     *
-     * @type {Array<string>}
-     */
-    defaultModuleNames = ['routing'],
-    /**
-     * Whether to create a new instance of a
-     * client or return the existing instance.
-     *
-     * @type {boolean}
-     */
-    newInstance = false,
-  } = {}) {
+  _config: { [string]: mixed } = {};
+
+  _context: { [string]: Function } = {
+    getConfig: this._getConfig.bind(this),
+    dispatch: this._dispatch.bind(this),
+    getState: this._getState.bind(this),
+    subscribe: this._subscribe.bind(this),
+  };
+
+  _defaultModuleNames: string[];
+  _defaultModules: { [string]: Module } = { routing };
+  _modules: { [string]: Module } = {};
+  _started: boolean = false;
+  _subscribers: { [string]: Subscriber[] } = {};
+
+  constructor({ defaultModuleNames = ['routing'], newInstance = false }: ContainerArgs = {}) {
     if (_this && !newInstance) return _this;
     this._addDefaultModules(defaultModuleNames);
     _this = this;
     return _this;
   }
 
-  /**
-   *
-   * @private
-   * @type {Object}
-   */
-  _context = {
-    getConfig: this._getConfig,
-    dispatch: this._dispatch,
-    getState: this._getState,
-    subscribe: this._subscribe,
-  };
-
-  /**
-   *
-   * @private
-   * @type {Object}
-   */
-  _config = {};
-
-  /**
-   *
-   * @private
-   * @type {Array<string>}
-   */
-  _defaultModuleNames;
-
-  /**
-   *
-   * @private
-   * @type {Array<Class>}
-   */
-  _defaultModules = { routing };
-
-  /**
-   *
-   * @private
-   * @type {Object}
-   */
-  _modules = {};
-
-  /**
-   *
-   * @private
-   * @type {boolean}
-   */
-  _started = false;
-
-  /**
-   *
-   * @private
-   * @type {Object}
-   */
-  _subscribers = {};
-
-  /**
-   *
-   * @private
-   * @param {Array<string>} names
-   * @return {void}
-   */
-  _addDefaultModules(names) {
+  _addDefaultModules(names: string[]): void {
     if (!isArray(names)) {
       const error = 'Yallah::container::_addDefaultModules::The default module names were invalid.';
       logger.error(error, { names });
@@ -123,13 +62,7 @@ export default class BaseContainer {
     });
   }
 
-  /**
-   *
-   * @private
-   * @param {Module} mod
-   * @return {void}
-   */
-  _addModule(mod) {
+  _addModule(mod: Module): void {
     if (!(mod instanceof Module)) {
       logger.error('Yallah::container::_addModule::The module was invalid.', { module: mod });
       return;
@@ -139,28 +72,13 @@ export default class BaseContainer {
     this._modules[mod.name] = mod;
   }
 
-  /**
-   *
-   * @private
-   * @return {void}
-   */
-  async _addSubscribers() {
+  async _addSubscribers(): Promise<void> {
     await Promise.all(Object.keys(this._modules)
       .map(moduleName => this._modules[moduleName].addSubscribers()));
   }
 
-  /**
-   *
-   * @private
-   * @param {Object} args
-   * @param {Object} args.error
-   * @param {Object} args.meta
-   * @param {Object} args.payload
-   * @param {Object} args.type
-   * @return {void}
-   */
-  async _dispatch(args) {
-    if (!_this._started) {
+  async _dispatch(args: ActionArgs): Promise<void> {
+    if (!this._started) {
       logger.info('Yallah::container::_dispatch::The application has not started.', { args });
       return;
     }
@@ -172,39 +90,22 @@ export default class BaseContainer {
       return;
     }
 
-    await _this._distribute(action);
+    await this._distribute(action);
   }
 
-  /**
-   *
-   * @private
-   * @param {Action} action
-   * @return {void}
-   */
-  async _distribute(action) {
+  async _distribute(action: Action): Promise<void> {
     const subscribers = this._subscribers[action.type];
     if (!subscribers) return;
-
     await Promise.all(subscribers.map(subscriber => subscriber.execute(action)));
   }
 
-  /**
-   *
-   * @private
-   * @param {string} [key]
-   * @return {any}
-   */
-  _getConfig(key) {
-    if (!key) return _this._config;
-    return _this._config[key];
+  _getConfig(key?: string): any {
+    if (!key) return this._config;
+    return this._config[key];
   }
 
-  /**
-   *
-   * @return {Object}
-   */
-  _getState() {
-    if (!_this._started) {
+  _getState(): void | { [string]: mixed } {
+    if (!this._started) {
       const info = 'Yallah::container::_getState::The application has not started.';
       logger.info(info);
       return undefined;
@@ -212,28 +113,18 @@ export default class BaseContainer {
 
     const state = {};
 
-    Object.keys(_this._modules).forEach((name) => {
-      state[name] = _this._modules[name].state;
+    Object.keys(this._modules).forEach((name) => {
+      state[name] = this._modules[name].state;
     });
 
     return state;
   }
 
-  /**
-   *
-   * @private
-   * @return {void}
-   */
-  async _removeSubscribers() {
+  async _removeSubscribers(): Promise<void> {
     this._subscribers = {};
   }
 
-  /**
-   *
-   * @private
-   * @return {void}
-   */
-  async _reset() {
+  async _reset(): Promise<void> {
     await Promise.all([
       this._removeSubscribers(),
       this._resetConfig(),
@@ -241,49 +132,23 @@ export default class BaseContainer {
     ]);
   }
 
-  /**
-   *
-   * @private
-   * @return {void}
-   */
-  async _resetConfig() {
+  async _resetConfig(): Promise<void> {
     this._config = {};
   }
 
-  /**
-   *
-   * @private
-   * @return {void}
-   */
-  async _resetState() {
+  async _resetState(): Promise<void> {
     Object.keys(this._modules).forEach((moduleName) => {
       const mod = this._modules[moduleName];
       mod.resetState();
     });
   }
 
-  /**
-   *
-   * @private
-   * @return {void}
-   */
-  async _start() {
-    await Promise.all([
-      this._addSubscribers(),
-    ]);
+  async _start(): Promise<void> {
+    await this._addSubscribers();
   }
 
-  /**
-   *
-   * @private
-   * @param {Object} args
-   * @param {Function} args.callback
-   * @param {string} args.name
-   * @param {string} args.type
-   * @return {void}
-   */
-  async _subscribe(args) {
-    if (!_this._started) {
+  async _subscribe(args: SubscriberArgs): Promise<void> {
+    if (!this._started) {
       logger.info('Yallah::container::_subscribe::The application has not started.', { args });
       return;
     }
@@ -295,17 +160,12 @@ export default class BaseContainer {
       return;
     }
 
-    const subscribers = _this._subscribers[subscriber.type] || [];
+    const subscribers = this._subscribers[subscriber.type] || [];
     subscribers.push(subscriber);
-    _this._subscribers[subscriber.type] = subscribers;
+    this._subscribers[subscriber.type] = subscribers;
   }
 
-  /**
-   *
-   * @param {Array<Module>|Module} mod
-   * @return {void}
-   */
-  addModule(mod) {
+  addModule(mod: Module | Module[]): void {
     const mods = castArray(mod);
 
     mods.forEach((value) => {
@@ -313,55 +173,29 @@ export default class BaseContainer {
     });
   }
 
-  /**
-   *
-   * @param {Object} action
-   * @return {void}
-   */
-  async dispatch(action) {
+  async dispatch(action: ActionArgs): Promise<void> {
     await this._dispatch(action);
   }
 
-  /**
-   *
-   * @param {string} [key]
-   * @return {any}
-   */
-  getConfig(key) {
+  getConfig(key?: string) {
     return this._getConfig(key);
   }
 
-  /**
-   *
-   * @return {Object}
-   */
-  getState() {
+  getState(): void | { [string]: mixed } {
     return this._getState();
   }
 
-  /**
-   *
-   * @return {void}
-   */
-  async reset() {
+  async reset(): Promise<void> {
     await this._reset();
   }
 
-  /**
-   *
-   * @return {void}
-   */
-  async start() {
+  async start(): Promise<void> {
     this._started = true;
     await this._start();
     await this._dispatch(start());
   }
 
-  /**
-   *
-   * @return {void}
-   */
-  async stop() {
+  async stop(): Promise<void> {
     await this._dispatch(stop());
     this._started = false;
   }

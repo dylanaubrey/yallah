@@ -23,8 +23,8 @@ describe('when the app container class is initialised', () => {
     expect(container._listeners).to.be.lengthOf(1);
   });
 
-  it('should stage the initial state', () => {
-    expect(container._initialState).to.eql({ user: userState });
+  it('should stage the server state', () => {
+    expect(container._serverState).to.eql({ user: userState });
   });
 });
 

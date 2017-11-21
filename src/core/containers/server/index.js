@@ -70,6 +70,26 @@ export default class ServerContainer extends BaseContainer {
 
   /**
    *
+   * @private
+   * @return {void}
+   */
+  async _setInitialState() {
+    // TODO
+  }
+
+  /**
+   *
+   * @private
+   * @return {void}
+   */
+  async _start() {
+    await super._start();
+    await this._setInitialState();
+    await this._setConfig();
+  }
+
+  /**
+   *
    * @param {Array<Object>} config
    * @return {void}
    */

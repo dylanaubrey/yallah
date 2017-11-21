@@ -1,86 +1,30 @@
+// @flow
+
 import { isString } from 'lodash';
 
-/**
- *
- * The Yallah action
- */
+export type ActionArgs = {
+  error?: boolean,
+  meta?: { [string]: any },
+  payload?: mixed,
+  type: string,
+};
+
 export default class Action {
-  /**
-   *
-   * @constructor
-   * @param {Object} config
-   * @return {Action}
-   */
+  error: boolean;
+  meta: { [string]: any };
+  payload: mixed;
+  type: string;
+
   constructor({
-    /**
-     * Optional property to indicate error.
-     *
-     * @type {boolean}
-     */
-    error,
-    /**
-     * Optional property to pass additional data.
-     *
-     * @type {any}
-     */
-    meta,
-    /**
-     * Optional property to pass payload
-     * of action.
-     *
-     * @type {any}
-     */
-    payload,
-    /**
-     * Type of action
-     *
-     * @type {string}
-     */
-    type,
-  } = {}) {
-    this._error = error || false;
-    this._meta = meta || {};
-    this._payload = payload || null;
-    this._type = type;
+    error, meta, payload, type,
+  }: ActionArgs = {}) {
+    this.error = error || false;
+    this.meta = meta || {};
+    this.payload = payload || null;
+    this.type = type;
   }
 
-  /**
-   *
-   * @return {boolean}
-   */
-  get error() {
-    return this._error;
-  }
-
-  /**
-   *
-   * @return {Object}
-   */
-  get meta() {
-    return this._meta;
-  }
-
-  /**
-   *
-   * @return {any}
-   */
-  get payload() {
-    return this._payload;
-  }
-
-  /**
-   *
-   * @return {string}
-   */
-  get type() {
-    return this._type;
-  }
-
-  /**
-   *
-   * @return {boolean}
-   */
-  valid() {
-    return isString(this._type);
+  valid(): boolean {
+    return isString(this.type);
   }
 }

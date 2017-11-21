@@ -1,64 +1,30 @@
+// @flow
+
 import { isFunction, isString } from 'lodash';
+import Action from '../action';
 
-/**
- *
- * The Yallah subscriber
- */
+export type SubscriberArgs = {
+  callback: Function,
+  name: string,
+  type: string,
+};
+
 export default class Subscriber {
-  /**
-   *
-   * @constructor
-   * @param {Object} config
-   * @return {Subscriber}
-   */
-  constructor({
-    /**
-     * Callback to be executed when a
-     * matching action is received.
-     *
-     * @type {Function}
-     */
-    callback,
-    /**
-     * Name of the subscriber.
-     *
-     * @type {string}
-     */
-    name,
-    /**
-     * Action to subscribe to.
-     *
-     * @type {string}
-     */
-    type,
-  } = {}) {
+  _callback: Function;
+  name: string;
+  type: string;
+
+  constructor({ callback, name, type }: SubscriberArgs = {}) {
     this._callback = callback;
-    this._name = name;
-    this._type = type;
+    this.name = name;
+    this.type = type;
   }
 
-  /**
-   *
-   * @return {string}
-   */
-  get type() {
-    return this._type;
-  }
-
-  /**
-   *
-   * @param {Action} action
-   * @return {void}
-   */
-  async execute(action) {
+  async execute(action: Action): Promise<void> {
     await this._callback(action);
   }
 
-  /**
-   *
-   * @return {boolean}
-   */
-  valid() {
-    return isString(this._type) && isString(this._name) && isFunction(this._callback);
+  valid(): boolean {
+    return isString(this.type) && isString(this.name) && isFunction(this._callback);
   }
 }

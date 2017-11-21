@@ -11,5 +11,5 @@ container.listen(document, 'click', async (e) => {
   container.dispatch(click(e));
 });
 
-container.addInitialState({ user: userState });
+container.addServerState({ user: userState });
 export default container;

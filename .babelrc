@@ -9,7 +9,8 @@
           "targets": { "browsers": "last 4 versions" },
           "useBuiltIns": "usage"
         }],
-        "@babel/preset-stage-0"
+        "@babel/preset-stage-0",
+        "@babel/preset-flow"
       ]
     },
     "main": {
@@ -21,7 +22,8 @@
           "targets": { "node": "6" },
           "useBuiltIns": "usage"
         }],
-        "@babel/preset-stage-0"
+        "@babel/preset-stage-0",
+        "@babel/preset-flow"
       ]
     },
     "module": {
@@ -34,7 +36,8 @@
           "targets": { "node": "6" },
           "useBuiltIns": "usage"
         }],
-        "@babel/preset-stage-0"
+        "@babel/preset-stage-0",
+        "@babel/preset-flow"
       ]
     },
     "test": {
@@ -45,7 +48,8 @@
           "targets": { "browsers": "last 4 versions" },
           "useBuiltIns": "usage"
         }],
-        "@babel/preset-stage-0"
+        "@babel/preset-stage-0",
+        "@babel/preset-flow"
       ]
     },
     "debug": {
@@ -55,7 +59,8 @@
           "targets": { "chrome": 60 },
           "useBuiltIns": "usage"
         }],
-        "@babel/preset-stage-0"
+        "@babel/preset-stage-0",
+        "@babel/preset-flow"
       ]
     }
   }

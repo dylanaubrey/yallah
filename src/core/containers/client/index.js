@@ -45,7 +45,7 @@ export default class ClientContainer extends BaseContainer {
    * @private
    * @type {Object}
    */
-  _initialState = {};
+  _serverState = {};
 
   /**
    *
@@ -144,10 +144,10 @@ export default class ClientContainer extends BaseContainer {
    * @private
    * @return {void}
    */
-  async _setInitialState() {
+  async _setServerState() {
     await Promise.all(Object.keys(this._modules).map(async (moduleName) => {
       const mod = this._modules[moduleName];
-      if (this._initialState[moduleName]) await mod._setState(this._initialState[moduleName]);
+      if (this._serverState[moduleName]) await mod._setState(this._serverState[moduleName]);
     }));
   }
 
@@ -158,12 +158,9 @@ export default class ClientContainer extends BaseContainer {
    */
   async _start() {
     await super._start();
-
-    await Promise.all([
-      this._setConfig(),
-      this._setInitialState(),
-      this._addListeners(),
-    ]);
+    await this._setConfig();
+    await this._setServerState();
+    await this._addListeners();
   }
 
   /**
@@ -186,14 +183,14 @@ export default class ClientContainer extends BaseContainer {
    * @param {Object} serverState
    * @return {void}
    */
-  addInitialState(serverState) {
+  addServerState(serverState) {
     if (!isPlainObject(serverState)) {
-      const error = 'Yallah::container::setInitialState::The server state was invalid.';
+      const error = 'Yallah::container::addServerState::The server state was invalid.';
       logger.error(error, { serverState });
       return;
     }
 
-    this._initialState = serverState;
+    this._serverState = serverState;
   }
 
   /**
