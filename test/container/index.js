@@ -7,8 +7,12 @@ const container = new ClientContainer();
 // container.addConfig([]);
 container.addModule([userModule]);
 
-container.listen(document, 'click', async (e) => {
-  container.dispatch(click(e));
+container.listen({
+  callback: (e) => {
+    container.dispatch(click(e));
+  },
+  target: document,
+  type: 'click',
 });
 
 container.addServerState({ user: userState });

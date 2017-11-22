@@ -11,13 +11,17 @@ export type SubscriberArgs = {
 
 export default class Subscriber {
   _callback: Function;
-  name: string;
-  type: string;
+  _name: string;
+  _type: string;
 
   constructor({ callback, name, type }: SubscriberArgs = {}) {
     this._callback = callback;
-    this.name = name;
-    this.type = type;
+    this._name = name;
+    this._type = type;
+  }
+
+  get type(): string {
+    return this._type;
   }
 
   async execute(action: Action): Promise<void> {
@@ -25,6 +29,6 @@ export default class Subscriber {
   }
 
   valid(): boolean {
-    return isString(this.type) && isString(this.name) && isFunction(this._callback);
+    return isString(this._type) && isString(this._name) && isFunction(this._callback);
   }
 }

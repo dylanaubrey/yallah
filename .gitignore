@@ -2,6 +2,7 @@
 .nyc_output/
 .vscode/
 coverage/
+flow-typed/
 lib/
 node_modules/
 npm-debug.log

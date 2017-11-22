@@ -1,14 +1,12 @@
 // @flow
 
 import { castArray, isArray } from 'lodash';
+import Action, { type ActionArgs } from '../../action';
+import Module from '../../module';
+import Subscriber, { type SubscriberArgs } from '../../subscriber';
 import { start, stop } from '../../../actions/container';
 import routing from '../../../modules/routing';
 import logger from '../../../logger';
-import Action from '../../action';
-import Module from '../../module';
-import Subscriber from '../../subscriber';
-import type { ActionArgs } from '../../action';
-import type { SubscriberArgs } from '../../subscriber';
 
 require('es6-promise').polyfill();
 

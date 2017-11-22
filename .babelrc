@@ -1,4 +1,12 @@
 {
+  "ignore": [
+    ".nyc_output",
+    ".vscode",
+    "coverage",
+    "flow-typed",
+    "lib",
+    "node_modules"
+  ],
   "env": {
     "browser": {
       "comments": false,

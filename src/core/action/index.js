@@ -10,21 +10,25 @@ export type ActionArgs = {
 };
 
 export default class Action {
-  error: boolean;
-  meta: { [string]: any };
-  payload: mixed;
-  type: string;
+  _error: boolean;
+  _meta: { [string]: any };
+  _payload: mixed;
+  _type: string;
 
   constructor({
     error, meta, payload, type,
   }: ActionArgs = {}) {
-    this.error = error || false;
-    this.meta = meta || {};
-    this.payload = payload || null;
-    this.type = type;
+    this._error = error || false;
+    this._meta = meta || {};
+    this._payload = payload || null;
+    this._type = type;
+  }
+
+  get type(): string {
+    return this._type;
   }
 
   valid(): boolean {
-    return isString(this.type);
+    return isString(this._type);
   }
 }

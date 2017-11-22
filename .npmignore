@@ -2,5 +2,6 @@
 .sonar/
 .vscode/
 coverage/
+flow-typed/
 src/
 npm-debug.log

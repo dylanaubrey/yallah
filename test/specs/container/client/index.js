@@ -20,7 +20,7 @@ describe('when the app container class is initialised', () => {
   });
 
   it('should stage the event listeners', () => {
-    expect(container._listeners).to.be.lengthOf(1);
+    expect(container._eventListeners._listeners).to.be.lengthOf(10);
   });
 
   it('should stage the server state', () => {

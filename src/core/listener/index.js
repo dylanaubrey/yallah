@@ -1,71 +1,37 @@
+// @flow
+
 import { isFunction, isString } from 'lodash';
 
-/**
- *
- * The Yallah listener
- */
+export type ListenerArgs = {
+  callback: Function,
+  target: EventTarget,
+  type: string,
+};
+
 export default class Listener {
-  /**
-   *
-   * @constructor
-   * @param {Object} config
-   * @return {Listener}
-   */
-  constructor({
-    /**
-     * Callback to be executed when a
-     * event is triggered.
-     *
-     * @type {Function}
-     */
-    callback,
-    /**
-     * Event target to bind to.
-     *
-     * @type {EventTarget}
-     */
-    target,
-    /**
-     * Event type to subscribe to.
-     *
-     * @type {string}
-     */
-    type,
-  } = {}) {
+  _callback: Function;
+  _target: EventTarget;
+  _type: string;
+
+  constructor({ callback, target, type }: ListenerArgs = {}) {
     this._callback = callback;
     this._target = target;
     this._type = type;
   }
 
-  /**
-   *
-   * @return {Function}
-   */
-  get callback() {
+  get callback(): Function {
     return this._callback;
   }
 
-  /**
-   *
-   * @return {EventTarget}
-   */
-  get target() {
+  get target(): EventTarget {
     return this._target;
   }
 
-  /**
-   *
-   * @return {string}
-   */
-  get type() {
+  get type(): string {
     return this._type;
   }
 
-  /**
-   *
-   * @return {boolean}
-   */
-  valid() {
+  valid(): boolean {
     return isFunction(this._target.addEventListener) && isString(this._type)
       && isFunction(this._callback);
   }
