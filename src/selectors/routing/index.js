@@ -1,7 +1,10 @@
+// @flow
+
 import { parse } from 'querystring';
 import { createSelector } from 'reselect';
+import type { StateObj } from '../../core/types';
 
-export const getRouting = (({ routing }) => routing);
+export const getRouting = (({ routing }: StateObj) => routing);
 
 export const getHistory = createSelector(
   getRouting,

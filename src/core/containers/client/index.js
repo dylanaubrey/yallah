@@ -5,7 +5,7 @@ import BaseContainer, { type ContainerArgs } from '../base';
 import type { ListenerArgs } from '../../listener';
 import EventListeners from '../../event-listeners';
 import type { ConfigObj, StateObj } from '../../types';
-import { deepFreeze } from '../../../helpers';
+import deepFreeze from '../../../helpers/deep-freeze';
 import logger from '../../../logger';
 import browserLifecycleListeners from '../../event-listeners/browser-lifecycle';
 import dispatchListener from '../../event-listeners/dispatch';

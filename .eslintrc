@@ -15,6 +15,16 @@
   "rules": {
     // overrides
     "flowtype/delimiter-dangle": [2, "always-multiline"],
+    "flowtype/object-type-delimiter": [2, "comma"],
+    "flowtype/require-parameter-type": [2, { "excludeArrowFunctions": true }],
+    "flowtype/require-return-type": [2, "always", {
+      "annotateUndefined": "always",
+      "excludeArrowFunctions": true,
+      "excludeMatching": ["constructor"]
+    }],
+    "flowtype/require-valid-file-annotation": 2,
+    "flowtype/semi": 2,
+    "flowtype/sort-keys": 2,
     "no-param-reassign": ["error", { "props": false }],
     "no-underscore-dangle": 0,
     "one-var": ["error", { "initialized": "never" }],

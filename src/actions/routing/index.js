@@ -1,3 +1,8 @@
+// @flow
+
+import type { ActionArgs } from '../../core/action';
+import type { ObjectMap } from '../../core/types';
+
 export const GO_BACK = 'ROUTING/GO_BACK';
 export const GO_FORWARD = 'ROUTING/GO_FORWARD';
 export const GO = 'ROUTING/GO';
@@ -5,56 +10,26 @@ export const ROUTE_CHANGE = 'ROUTING/ROUTE_CHANGE';
 export const PUSH = 'ROUTING/PUSH';
 export const REPLACE = 'ROUTING/REPLACE';
 
-/**
- *
- * @return {Object}
- */
-export const goBack = function goBack() {
+export const goBack = function goBack(): ActionArgs {
   return { type: GO_BACK };
 };
 
-/**
- *
- * @return {Object}
- */
-export const goForward = function goForward() {
+export const goForward = function goForward(): ActionArgs {
   return { type: GO_FORWARD };
 };
 
-/**
- *
- * @param {number} index
- * @return {Object}
- */
-export const go = function go(index) {
+export const go = function go(index: number): ActionArgs {
   return { type: GO, payload: index };
 };
 
-/**
- *
- * @param {string} action
- * @return {Object}
- */
-export const routeChange = function routeChange(action) {
+export const routeChange = function routeChange(action: string): ActionArgs {
   return { type: ROUTE_CHANGE, payload: action };
 };
 
-/**
- *
- * @param {string} url
- * @param {Object} state
- * @return {Object}
- */
-export const push = function push(url, state = {}) {
+export const push = function push(url: string, state: ObjectMap = {}): ActionArgs {
   return { type: GO, payload: { state, url } };
 };
 
-/**
- *
- * @param {string} url
- * @param {Object} state
- * @return {Object}
- */
-export const replace = function replace(url, state = {}) {
+export const replace = function replace(url: string, state: ObjectMap = {}): ActionArgs {
   return { type: GO, payload: { state, url } };
 };

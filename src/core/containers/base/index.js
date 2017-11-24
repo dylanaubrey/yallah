@@ -19,8 +19,8 @@ export type GetState = () => StateObj;
 export type Subscribe = (args: SubscriberArgs) => Promise<void>;
 
 export type Context = {
-  getConfig: GetConfig,
   dispatch: Dispatch,
+  getConfig: GetConfig,
   getState: GetState,
   subscribe: Subscribe,
 };
@@ -185,7 +185,7 @@ export default class BaseContainer {
     await this._dispatch(action);
   }
 
-  getConfig(key?: string) {
+  getConfig(key?: string): ConfigObj {
     return this._getConfig(key);
   }
 

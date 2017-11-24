@@ -4,7 +4,7 @@ import { castArray, merge } from 'lodash';
 import BaseContainer, { type ContainerArgs } from '../base';
 import Config, { type ConfigArgs, type Matcher } from '../../config';
 import type { ConfigObj } from '../../types';
-import { deepFreeze } from '../../../helpers';
+import deepFreeze from '../../../helpers/deep-freeze';
 import logger from '../../../logger';
 
 let _this;
@@ -17,7 +17,7 @@ export default class ServerContainer extends BaseContainer {
     return _this;
   }
 
-  _addConfig(filePath: string, matcher: ?Matcher, priority: number) {
+  _addConfig(filePath: string, matcher: ?Matcher, priority: number): void {
     const config = new Config({ filePath, matcher, priority });
 
     if (!config.valid()) {
@@ -43,7 +43,7 @@ export default class ServerContainer extends BaseContainer {
     this._config = await deepFreeze(mergedConfig);
   }
 
-  async _setInitialState() {
+  async _setInitialState(): Promise<void> {
     // TODO
   }
 
@@ -52,7 +52,7 @@ export default class ServerContainer extends BaseContainer {
    * @private
    * @return {void}
    */
-  async _start() {
+  async _start(): Promise<void> {
     await super._start();
     await this._setInitialState();
     await this._setConfig();

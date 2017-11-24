@@ -1,18 +1,14 @@
+// @flow
+
+import type { ActionArgs } from '../../core/action';
+
 export const START = 'CONTAINER/START';
 export const STOP = 'CONTAINER/STOP';
 
-/**
- *
- * @return {Object}
- */
-export const start = function start() {
+export const start = function start(): ActionArgs {
   return { type: START };
 };
 
-/**
- *
- * @return {Object}
- */
-export const stop = function stop() {
+export const stop = function stop(): ActionArgs {
   return { type: STOP };
 };

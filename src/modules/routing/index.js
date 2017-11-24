@@ -1,3 +1,5 @@
+// @flow
+
 import { createBrowserHistory, createMemoryHistory } from 'history';
 import { isNumber, isPlainObject, isString } from 'lodash';
 import { GO_BACK, GO_FORWARD, GO, PUSH, REPLACE, routeChange } from '../../actions/routing';
