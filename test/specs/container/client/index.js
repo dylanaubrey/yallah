@@ -1,8 +1,8 @@
 import chai, { expect } from 'chai';
 import dirtyChai from 'dirty-chai';
 import sinonChai from 'sinon-chai';
-import container from '../../../container';
-import userState from '../../../state/user/index.json';
+import container from '../../../app/container/client';
+import userState from '../../../data/state/user/index.json';
 import { ClientContainer } from '../../../../src';
 import Module from '../../../../src/core/module';
 

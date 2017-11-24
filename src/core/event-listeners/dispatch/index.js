@@ -1,10 +1,11 @@
 // @flow
 
-import { type ListenerArgs } from '../../listener';
+import type { Dispatch } from '../../containers/base';
+import type { ListenerArgs } from '../../listener';
 
-export default function dispatchListener(dispatch: Function): ListenerArgs {
+export default function dispatchListener(dispatch: Dispatch): ListenerArgs {
   return {
-    callback: ({ detail: { action } }: CustomEvent) => dispatch(action),
+    callback: ({ detail: { action } }: CustomEvent): Promise<void> => dispatch(action),
     target: window,
     type: 'dispatch',
   };

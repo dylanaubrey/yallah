@@ -2,8 +2,9 @@
 
 import { isPlainObject } from 'lodash';
 import BaseContainer, { type ContainerArgs } from '../base';
-import { type ListenerArgs } from '../../listener';
+import type { ListenerArgs } from '../../listener';
 import EventListeners from '../../event-listeners';
+import type { ConfigObj, StateObj } from '../../types';
 import { deepFreeze } from '../../../helpers';
 import logger from '../../../logger';
 import browserLifecycleListeners from '../../event-listeners/browser-lifecycle';
@@ -13,8 +14,8 @@ let _this;
 
 export default class ClientContainer extends BaseContainer {
   _eventListeners: EventListeners = new EventListeners();
-  _serverState: { [string]: mixed } = {};
-  _serverConfig: { [string]: mixed } = {};
+  _serverConfig: ConfigObj = {};
+  _serverState: StateObj = {};
 
   constructor(config: ContainerArgs) {
     _this = super(config);
@@ -60,7 +61,7 @@ export default class ClientContainer extends BaseContainer {
     await this._addListeners();
   }
 
-  addConfig(serverConfig: { [string]: mixed }): void {
+  addConfig(serverConfig: ConfigObj): void {
     if (!isPlainObject(serverConfig)) {
       const error = 'Yallah::container::addConfig::The server config was invalid.';
       logger.error(error, { serverConfig });
@@ -70,7 +71,7 @@ export default class ClientContainer extends BaseContainer {
     this._serverConfig = serverConfig;
   }
 
-  addServerState(serverState: { [string]: mixed }): void {
+  addServerState(serverState: StateObj): void {
     if (!isPlainObject(serverState)) {
       const error = 'Yallah::container::addServerState::The server state was invalid.';
       logger.error(error, { serverState });
@@ -80,7 +81,7 @@ export default class ClientContainer extends BaseContainer {
     this._serverState = serverState;
   }
 
-  listen(args: ListenerArgs[] | ListenerArgs): void {
+  listen(args: ListenerArgs | ListenerArgs[]): void {
     this._eventListeners.stage(args);
   }
 }

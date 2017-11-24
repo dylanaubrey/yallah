@@ -5,7 +5,6 @@ import Listener, { type ListenerArgs } from '../listener';
 import logger from '../../logger';
 
 export default class EventListeners {
-  _dispatch: Function;
   _listeners: Listener[] = [];
 
   async add(): Promise<void> {

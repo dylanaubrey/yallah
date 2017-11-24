@@ -1,9 +1,10 @@
 // @flow
 
-import { castArray, isArray } from 'lodash';
+import { castArray } from 'lodash';
 import Action, { type ActionArgs } from '../../action';
 import Module from '../../module';
 import Subscriber, { type SubscriberArgs } from '../../subscriber';
+import type { ConfigObj, StateObj } from '../../types';
 import { start, stop } from '../../../actions/container';
 import routing from '../../../modules/routing';
 import logger from '../../../logger';
@@ -12,42 +13,51 @@ require('es6-promise').polyfill();
 
 let _this;
 
+export type GetConfig = (key: ?string) => any;
+export type Dispatch = (args: ActionArgs) => Promise<void>;
+export type GetState = () => StateObj;
+export type Subscribe = (args: SubscriberArgs) => Promise<void>;
+
+export type Context = {
+  getConfig: GetConfig,
+  dispatch: Dispatch,
+  getState: GetState,
+  subscribe: Subscribe,
+};
+
 export type ContainerArgs = {
-  defaultModuleNames: string[],
-  newInstance: boolean,
+  defaultModuleNames?: string[],
+  newInstance?: boolean,
 };
 
 export default class BaseContainer {
-  _config: { [string]: mixed } = {};
+  _config: ConfigObj = {};
 
-  _context: { [string]: Function } = {
+  _context: Context = {
     getConfig: this._getConfig.bind(this),
     dispatch: this._dispatch.bind(this),
     getState: this._getState.bind(this),
     subscribe: this._subscribe.bind(this),
   };
 
-  _defaultModuleNames: string[];
   _defaultModules: { [string]: Module } = { routing };
   _modules: { [string]: Module } = {};
   _started: boolean = false;
   _subscribers: { [string]: Subscriber[] } = {};
 
-  constructor({ defaultModuleNames = ['routing'], newInstance = false }: ContainerArgs = {}) {
+  constructor(args: ?ContainerArgs) {
+    const _args = args || {};
+    const { defaultModuleNames, newInstance = false } = _args;
     if (_this && !newInstance) return _this;
     this._addDefaultModules(defaultModuleNames);
     _this = this;
     return _this;
   }
 
-  _addDefaultModules(names: string[]): void {
-    if (!isArray(names)) {
-      const error = 'Yallah::container::_addDefaultModules::The default module names were invalid.';
-      logger.error(error, { names });
-      return;
-    }
+  _addDefaultModules(names: ?string[]): void {
+    const _names = names || Object.keys(this._defaultModules);
 
-    names.forEach((name) => {
+    _names.forEach((name) => {
       const defaultModule = this._defaultModules[name];
 
       if (!defaultModule) {
@@ -97,19 +107,19 @@ export default class BaseContainer {
     await Promise.all(subscribers.map(subscriber => subscriber.execute(action)));
   }
 
-  _getConfig(key?: string): any {
+  _getConfig(key: ?string): any {
     if (!key) return this._config;
     return this._config[key];
   }
 
-  _getState(): void | { [string]: mixed } {
+  _getState(): StateObj {
+    const state: StateObj = {};
+
     if (!this._started) {
       const info = 'Yallah::container::_getState::The application has not started.';
       logger.info(info);
-      return undefined;
+      return state;
     }
-
-    const state = {};
 
     Object.keys(this._modules).forEach((name) => {
       state[name] = this._modules[name].state;
@@ -179,7 +189,7 @@ export default class BaseContainer {
     return this._getConfig(key);
   }
 
-  getState(): void | { [string]: mixed } {
+  getState(): StateObj {
     return this._getState();
   }
 

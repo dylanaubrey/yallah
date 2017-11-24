@@ -13,7 +13,7 @@ export default class Listener {
   _target: EventTarget;
   _type: string;
 
-  constructor({ callback, target, type }: ListenerArgs = {}) {
+  constructor({ callback, target, type }: ListenerArgs) {
     this._callback = callback;
     this._target = target;
     this._type = type;

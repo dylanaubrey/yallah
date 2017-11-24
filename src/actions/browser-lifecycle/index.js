@@ -1,3 +1,7 @@
+// @flow
+
+import type { ActionArgs } from '../../core/action';
+
 export const DOM_READY = 'BROWSER_LIFECYCLE/DOM_READY';
 export const LOAD = 'BROWSER_LIFECYCLE/LOAD';
 export const BEFORE_UNLOAD = 'BROWSER_LIFECYCLE/BEFORE_UNLOAD';
@@ -7,73 +11,34 @@ export const PAGE_HIDE = 'BROWSER_LIFECYCLE/PAGE_HIDE';
 export const ONLINE = 'BROWSER_LIFECYCLE/ONLINE';
 export const OFFLINE = 'BROWSER_LIFECYCLE/OFFLINE';
 
-/**
- *
- * @param {Event} e
- * @return {Object}
- */
-export const domReady = function domReady(e) {
+export const domReady = function domReady(e: Event): ActionArgs {
   return { type: DOM_READY, payload: e };
 };
 
-/**
- *
- * @param {Event} e
- * @return {Object}
- */
-export const load = function load(e) {
+export const load = function load(e: Event): ActionArgs {
   return { type: LOAD, payload: e };
 };
 
-/**
- *
- * @param {Event} e
- * @return {Object}
- */
-export const beforeUnload = function beforeUnload(e) {
+export const beforeUnload = function beforeUnload(e: Event): ActionArgs {
   return { type: BEFORE_UNLOAD, payload: e };
 };
 
-/**
- *
- * @param {Event} e
- * @return {Object}
- */
-export const unload = function unload(e) {
+export const unload = function unload(e: Event): ActionArgs {
   return { type: UNLOAD, payload: e };
 };
 
-/**
- *
- * @param {Event} e
- * @return {Object}
- */
-export const pageShow = function pageShow(e) {
+export const pageShow = function pageShow(e: Event): ActionArgs {
   return { type: PAGE_SHOW, payload: e };
 };
-/**
- *
- * @param {Event} e
- * @return {Object}
- */
-export const pageHide = function pageHide(e) {
+
+export const pageHide = function pageHide(e: Event): ActionArgs {
   return { type: PAGE_HIDE, payload: e };
 };
 
-/**
- *
- * @param {Event} e
- * @return {Object}
- */
-export const online = function online(e) {
+export const online = function online(e: Event): ActionArgs {
   return { type: ONLINE, payload: e };
 };
 
-/**
- *
- * @param {Event} e
- * @return {Object}
- */
-export const offline = function offline(e) {
+export const offline = function offline(e: Event): ActionArgs {
   return { type: OFFLINE, payload: e };
 };

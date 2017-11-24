@@ -1,7 +1,7 @@
-import { click } from '../actions/user';
-import userModule from '../modules/user';
-import userState from '../state/user/index.json';
-import { ClientContainer } from '../../src';
+import { click } from '../../actions/user';
+import userModule from '../../modules/user';
+import userState from '../../../data/state/user/index.json';
+import { ClientContainer } from '../../../../src';
 
 const container = new ClientContainer();
 // container.addConfig([]);

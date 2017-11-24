@@ -1,26 +1,27 @@
 // @flow
 
 import { isString } from 'lodash';
+import type { ObjectMap } from '../types';
 
 export type ActionArgs = {
   error?: boolean,
-  meta?: { [string]: any },
-  payload?: mixed,
+  meta?: ObjectMap,
+  payload?: any,
   type: string,
 };
 
 export default class Action {
-  _error: boolean;
-  _meta: { [string]: any };
-  _payload: mixed;
+  _error: ?boolean;
+  _meta: ?ObjectMap;
+  _payload: any;
   _type: string;
 
   constructor({
-    error, meta, payload, type,
-  }: ActionArgs = {}) {
-    this._error = error || false;
-    this._meta = meta || {};
-    this._payload = payload || null;
+    error = false, meta = {}, payload = null, type,
+  }: ActionArgs) {
+    this._error = error;
+    this._meta = meta;
+    this._payload = payload;
     this._type = type;
   }
 

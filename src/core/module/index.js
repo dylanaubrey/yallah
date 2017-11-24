@@ -1,157 +1,65 @@
-import { isPlainObject } from 'lodash';
-import logger from '../../logger';
+// @flow
 
-/**
- *
- * The Yallah container module
- */
+import type { ActionArgs } from '../action';
+import type { Context } from '../containers/base';
+import type { SubscriberArgs } from '../subscriber';
+import type { StateObj } from '../types';
+
 export default class Module {
-  /**
-   *
-   * @constructor
-   * @param {String} name
-   * @return {Branch}
-   */
-  constructor(name) {
-    if (!name) throw new Error('Yallah::module::constructor::Name is a mandatory argument for a module.');
+  _context: Context;
+  _name: string;
+  _state: StateObj;
+  _subscribers: SubscriberArgs[] = [];
+
+  constructor(name: string) {
     this._name = name;
   }
 
-  /**
-   *
-   * @private
-   * @type {Object}
-   */
-  _context = {};
-
-  /**
-   *
-   * @private
-   * @type {string}
-   */
-  _name;
-
-  /**
-   *
-   * @private
-   * @type {Object}
-   */
-  _state = {};
-
-  /**
-   *
-   * @private
-   * @type {Array<Object>}
-   */
-  _subscribers = [];
-
-  /**
-   *
-   * @return {string}
-   */
-  get name() {
+  get name(): string {
     return this._name;
   }
 
-  /**
-   *
-   * @return {Object}
-   */
-  get state() {
+  get state(): StateObj {
     return this._state;
   }
 
-  /**
-   *
-   * @private
-   * @return {void}
-   */
-  _resetState() {
+  _resetState(): void {
     this._state = {};
   }
 
-  /**
-   *
-   * @private
-   * @param {Object} obj
-   * @return {void}
-   */
-  _setState(obj) {
+  _setState(obj: StateObj): void {
     this._state = obj;
   }
 
-  /**
-   *
-   * @return {Object}
-   */
-  appState() {
+  appState(): StateObj {
     return this._context.getState();
   }
 
-  /**
-   *
-   * @return {void}
-   */
-  async addSubscribers() {
+  async addSubscribers(): Promise<void> {
     await Promise.all(this._subscribers.map(subscriber => this._context.subscribe(subscriber)));
   }
 
-  /**
-   *
-   * @param {Object} action
-   * @return {void}
-   */
-  async dispatch(action) {
+  async dispatch(action: ActionArgs): Promise<void> {
     await this._context.dispatch(action);
   }
 
-  /**
-   *
-   * @param {string} [key]
-   * @return {any}
-   */
-  getConfig(key) {
+  getConfig(key: ?string): any {
     return this._context.getConfig(key);
   }
 
-  /**
-   *
-   * @return {void}
-   */
-  resetState() {
+  resetState(): void {
     this._resetState();
   }
 
-  /**
-   *
-   * @param {Object} context
-   * @return {void}
-   */
-  setContext(context) {
-    this._context = { ...this._context, ...context };
+  setContext(context: Context): void {
+    this._context = context;
   }
 
-  /**
-   *
-   * @param {Object} obj
-   * @return {void}
-   */
-  setState(obj) {
-    if (!isPlainObject(obj)) {
-      logger.info('Yallah::module::setState::The state object was invalid.', { state: obj });
-      return;
-    }
-
+  setState(obj: StateObj): void {
     this._setState(obj);
   }
 
-  /**
-   *
-   * @param {string} type
-   * @param {Function} callback
-   * @return {void}
-   */
-  subscribe(type, callback) {
+  subscribe(type: string, callback: Function): void {
     this._subscribers.push({ callback, name: this._name, type });
   }
 }

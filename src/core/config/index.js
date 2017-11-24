@@ -1,4 +1,7 @@
-import { isFunction, isNumber, isPlainObject } from 'lodash';
+// @flow
+
+import { isFunction, isPlainObject } from 'lodash';
+import type { ConfigObj, StateObj } from '../types';
 import logger from '../../logger';
 
 let yamljs;
@@ -7,77 +10,43 @@ if (!process.env.WEB_ENV) {
   yamljs = require('yamljs'); // eslint-disable-line global-require
 }
 
-/**
- *
- * The Yallah config
- */
+export type Matcher = (StateObj) => boolean;
+
+export type ConfigArgs = {
+  filePath: string,
+  matcher?: ?Matcher,
+  priority?: number,
+};
+
 export default class Config {
-  /**
-   *
-   * @constructor
-   * @param {Object} config
-   * @return {Config}
-   */
-  constructor({
-    /**
-     * Absolute file location of
-     * the config yaml file.
-     *
-     * @type {string}
-     */
-    filePath,
-    /**
-     * Callback to be executed to
-     * determine whether to use the
-     * config. Callback receives the
-     * app state as its argument.
-     *
-     * @type {Function}
-     */
-    matcher,
-    /**
-     * The priority of the config
-     * over the other configs. Lower
-     * priority configs are overwritten
-     * by highter priority configs.
-     *
-     * @type {number}
-     */
-    priority,
-  } = {}) {
+  _filePath: string;
+  _matcher: ?Matcher;
+  _obj: ConfigObj;
+  _priority: ?number;
+
+  constructor({ filePath, matcher, priority }: ConfigArgs) {
     this._filePath = filePath;
-    if (isFunction(matcher)) this._matcher = matcher;
+    this._matcher = matcher;
     this._priority = priority;
 
     try {
       this._obj = yamljs.load(this._filePath);
-    } catch (err) {
+    } catch (error) {
       const message = 'Yallah::config::constructor::Failed to load yaml file';
-      logger.error(message, err);
+      logger.error(message, { error });
     }
   }
 
-  /**
-   *
-   * @return {Function}
-   */
-  get matcher() {
-    return this._matcher;
-  }
-
-  /**
-   *
-   * @return {Object}
-   */
-  get obj() {
+  get obj(): ConfigObj {
     return this._obj;
   }
 
-  /**
-   *
-   * @return {boolean}
-   */
-  valid() {
-    return isPlainObject(this._obj) && isNumber(this._priority);
+  use(state: StateObj): boolean {
+    if (!isFunction(this._matcher)) return true;
+    return this._matcher(state);
+  }
+
+  valid(): boolean {
+    return isPlainObject(this._obj);
   }
 }

@@ -14,7 +14,7 @@ export default class Subscriber {
   _name: string;
   _type: string;
 
-  constructor({ callback, name, type }: SubscriberArgs = {}) {
+  constructor({ callback, name, type }: SubscriberArgs) {
     this._callback = callback;
     this._name = name;
     this._type = type;
