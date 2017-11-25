@@ -10,7 +10,7 @@ const container = new ClientContainer();
 container.addModule([userModule]);
 
 container.listen({
-  callback: function onClick(e: Event): void {
+  callback(e: Event): void {
     container.dispatch(click(e));
   },
   target: document,

@@ -5,7 +5,9 @@ import type { ListenerArgs } from '../../listener';
 
 export default function dispatchListener(dispatch: Dispatch): ListenerArgs {
   return {
-    callback: ({ detail: { action } }: CustomEvent): Promise<void> => dispatch(action),
+    callback({ detail: { action } }: CustomEvent): void {
+      dispatch(action);
+    },
     target: window,
     type: 'dispatch',
   };
