@@ -3,7 +3,7 @@
 import { isArray, isFunction, isObjectLike } from 'lodash';
 import type { ObjectMap } from '../../core/types';
 
-export default async function deepFreeze(obj: ObjectMap): ObjectMap {
+const deepFreeze = async function deepFreeze(obj: ObjectMap): ObjectMap {
   const propNames = Object.getOwnPropertyNames(obj);
 
   await Promise.all(propNames.map(async (name) => {
@@ -26,4 +26,9 @@ export default async function deepFreeze(obj: ObjectMap): ObjectMap {
   }));
 
   return Object.freeze(obj);
-}
+};
+
+// NOTE: Default export of async function
+// moved to a separate line due to bug in
+// babel that is currently being fixed.
+export default deepFreeze;

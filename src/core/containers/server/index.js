@@ -12,8 +12,12 @@ let _this;
 export default class ServerContainer extends BaseContainer {
   _configs: ConfigObj[] = [];
 
-  constructor(config: ContainerArgs) {
-    _this = super(config);
+  constructor(args: ?ContainerArgs) {
+    const _args = args || {};
+    const { newInstance = false } = _args;
+    if (_this && !newInstance) return _this;
+    super(_args);
+    _this = this;
     return _this;
   }
 

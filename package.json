@@ -31,7 +31,7 @@
     "lint": "eslint . --fix",
     "postinstall": "npm run flow:init && npm install --global flow-typed && flow-typed install -s",
     "publish:pkg": "npm run build && npm publish",
-    "test": "npm run lint && npm run coverage:web",
+    "test": "npm run lint && npm run flow:check && npm run coverage:web",
     "transpile": "npm run clean && npm run transpile:browser && npm run transpile:main && npm run transpile:module",
     "transpile:browser": "cross-env BABEL_ENV=browser babel src --out-dir lib/browser --copy-files",
     "transpile:main": "cross-env BABEL_ENV=main babel src --out-dir lib/main --copy-files",

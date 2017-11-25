@@ -1,2 +1,4 @@
-export ServerContainer from './server';
-export ClientContainer from './client';
+// @flow
+
+export { default as ServerContainer } from './server';
+export { default as ClientContainer } from './client';

@@ -11,8 +11,6 @@ import logger from '../../../logger';
 
 require('es6-promise').polyfill();
 
-let _this;
-
 export type GetConfig = (key: ?string) => any;
 export type Dispatch = (args: ActionArgs) => Promise<void>;
 export type GetState = () => StateObj;
@@ -45,13 +43,8 @@ export default class BaseContainer {
   _started: boolean = false;
   _subscribers: { [string]: Subscriber[] } = {};
 
-  constructor(args: ?ContainerArgs) {
-    const _args = args || {};
-    const { defaultModuleNames, newInstance = false } = _args;
-    if (_this && !newInstance) return _this;
+  constructor({ defaultModuleNames }: ContainerArgs) {
     this._addDefaultModules(defaultModuleNames);
-    _this = this;
-    return _this;
   }
 
   _addDefaultModules(names: ?string[]): void {

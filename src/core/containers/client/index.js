@@ -17,9 +17,13 @@ export default class ClientContainer extends BaseContainer {
   _serverConfig: ConfigObj = {};
   _serverState: StateObj = {};
 
-  constructor(config: ContainerArgs) {
-    _this = super(config);
+  constructor(args: ?ContainerArgs) {
+    const _args = args || {};
+    const { newInstance = false } = _args;
+    if (_this && !newInstance) return _this;
+    super(_args);
     this._stageListeners();
+    _this = this;
     return _this;
   }
 

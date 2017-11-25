@@ -1,3 +1,5 @@
+// @flow
+
 import { click } from '../../actions/user';
 import userModule from '../../modules/user';
 import userState from '../../../data/state/user/index.json';
@@ -8,7 +10,7 @@ const container = new ClientContainer();
 container.addModule([userModule]);
 
 container.listen({
-  callback: (e) => {
+  callback: function onClick(e: Event): void {
     container.dispatch(click(e));
   },
   target: document,
